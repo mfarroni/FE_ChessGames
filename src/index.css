@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+.wood-dark {
+  background: repeating-linear-gradient(45deg, #100c0a, #100c0a 3px, #1c1512 3px, #1c1512 6px);
+}
+.wood-light {
+  background: repeating-linear-gradient(45deg, #f0ebd8, #f0ebd8 3px, #fbfaf5 3px, #fbfaf5 6px);
+}
+.board-shadow {
+  box-shadow: 0 50px 100px -20px rgba(0,0,0,0.8), inset 0 0 40px rgba(0,0,0,0.5);
+}
+.piece-shadow {
+  filter: drop-shadow(4px 8px 4px rgba(0,0,0,0.6));
+}
+.glass-panel {
+  background: rgba(20, 15, 10, 0.7);
+  backdrop-filter: blur(12px);
+  border-left: 1px solid rgba(255, 191, 105, 0.1);
+}
+.wood-grain {
+  opacity: 0.15;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+.spotlight {
+  background: radial-gradient(circle at 40% 40%, rgba(255,230,180,0.15) 0%, transparent 70%);
+}
