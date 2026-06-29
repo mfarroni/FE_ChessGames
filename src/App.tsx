@@ -1624,10 +1624,22 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-stone-900/80 bg-stone-950/60 py-4.5 px-6 text-center select-none relative z-10">
-        <p className="text-stone-600 text-[10px] font-mono">
+      <footer className="border-t border-stone-900/80 bg-stone-950/60 py-4.5 px-6 select-none relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p className="text-stone-600 text-[10px] font-mono text-center sm:text-left">
           Scacchi di Legno © 2026 • Realizzato in React & WebSockets per un'esperienza a latenza ultra-bassa.
         </p>
+        <div className="flex items-center gap-2">
+          <a 
+            href="#/admin" 
+            onClick={() => {
+              window.location.hash = '#/admin';
+              window.location.reload();
+            }}
+            className="text-amber-500/80 hover:text-amber-400 text-[10px] font-mono tracking-wider flex items-center gap-1 border border-amber-900/30 bg-amber-950/10 px-2.5 py-1 rounded hover:bg-amber-950/20 transition-all cursor-pointer"
+          >
+            <ShieldCheck className="w-3 h-3" /> Area Amministratore
+          </a>
+        </div>
       </footer>
 
       {/* MATCH TERMINAL STATE OUTCOME MODALS OVERLAY */}
