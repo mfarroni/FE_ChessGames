@@ -17,7 +17,8 @@ import {
   Download,
   Terminal,
   UserPlus,
-  Mail
+  Mail,
+  Key
 } from 'lucide-react';
 import { API_BASE_URL, getResourceUrl } from '../utils/apiConfig';
 
@@ -97,6 +98,12 @@ export default function AdminPanel() {
   });
   const [userFormError, setUserFormError] = useState<string | null>(null);
   const [userFormSuccess, setUserFormSuccess] = useState<string | null>(null);
+
+  // Reset Password states
+  const [resettingUser, setResettingUser] = useState<any | null>(null);
+  const [newPasswordInput, setNewPasswordInput] = useState<string>('');
+  const [resetSuccess, setResetSuccess] = useState<string | null>(null);
+  const [resetError, setResetError] = useState<string | null>(null);
 
   // Live Logs states
   const [logs, setLogs] = useState<any[]>([]);
@@ -243,6 +250,50 @@ export default function AdminPanel() {
       }
     } catch (err) {
       alert('Errore di rete durante l\'eliminazione.');
+    }
+  };
+
+  const handleResetPasswordClick = (user: any) => {
+    setResettingUser(user);
+    const randomPass = 'scacchi_' + Math.floor(1000 + Math.random() * 9000);
+    setNewPasswordInput(randomPass);
+    setResetSuccess(null);
+    setResetError(null);
+  };
+
+  const handleConfirmResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resettingUser) return;
+    if (!newPasswordInput.trim()) {
+      setResetError('La password non può essere vuota.');
+      return;
+    }
+    try {
+      const res = await fetch(`/api/admin/users/${resettingUser.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-token': adminToken || ''
+        },
+        body: JSON.stringify({
+          ...resettingUser,
+          password: newPasswordInput.trim()
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setResetSuccess(`Password reimpostata con successo per l'utente ${resettingUser.username}!`);
+        fetchUsers();
+        fetchLogs();
+        setTimeout(() => {
+          setResettingUser(null);
+          setResetSuccess(null);
+        }, 2000);
+      } else {
+        setResetError(data.message || 'Errore durante la reimpostazione della password.');
+      }
+    } catch (err) {
+      setResetError('Impossibile connettersi al server.');
     }
   };
 
@@ -1002,12 +1053,12 @@ export default function AdminPanel() {
                   <Users className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-base font-bold text-amber-200">Gestione Utenti Registrati</h3>
-                  <p className="text-[11px] text-stone-500 mt-0.5">Gestisci le credenziali, visualizza i punteggi Elo e gli account caricati nel database Postgres.</p>
+                  <h3 className="font-serif text-base font-bold text-amber-200">Gestione Giocatori e Utenti</h3>
+                  <p className="text-[10px] text-stone-400">Vedi, crea, modifica, elimina, e resetta le password dei giocatori.</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2">
                 <button
                   onClick={() => {
                     setEditingUserId(null);
@@ -1023,38 +1074,35 @@ export default function AdminPanel() {
                     setUserFormSuccess(null);
                     setShowUserModal(true);
                   }}
-                  className="px-3.5 py-2 bg-amber-700 hover:bg-amber-600 text-amber-100 text-xs font-bold rounded-xl border border-amber-600/20 shadow transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-3.5 py-1.5 bg-[#251711] hover:bg-[#3d271c] text-amber-200 text-xs font-bold rounded-xl border border-amber-800/30 transition-all flex items-center gap-1.5 cursor-pointer"
                 >
-                  <UserPlus className="w-3.5 h-3.5" /> Aggiungi Giocatore
+                  <UserPlus className="w-3.5 h-3.5" /> Nuovo Giocatore
                 </button>
-
                 <button
                   onClick={handleDownloadCSV}
-                  className="px-3.5 py-2 bg-stone-900 hover:bg-stone-800 text-stone-300 text-xs font-bold rounded-xl border border-stone-800 transition-all flex items-center gap-1.5 cursor-pointer"
-                  title="Esporta tutta la lista degli utenti registrati in formato CSV"
+                  className="px-3.5 py-1.5 bg-stone-900 hover:bg-stone-800 text-stone-300 text-xs font-bold rounded-xl border border-stone-800 transition-all flex items-center gap-1.5 cursor-pointer"
+                  title="Esporta lista giocatori in CSV"
                 >
                   <Download className="w-3.5 h-3.5" /> Esporta CSV
                 </button>
-
                 <button
                   onClick={fetchUsers}
-                  className="p-2 bg-stone-900 hover:bg-stone-800 text-stone-400 hover:text-stone-300 rounded-xl border border-stone-800 transition-all"
                   title="Aggiorna lista giocatori"
+                  className="p-1.5 text-stone-400 hover:text-amber-400 transition-colors"
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 ${loadingUsers ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`w-4 h-4 ${loadingUsers ? 'animate-spin' : ''}`} />
                 </button>
               </div>
             </div>
 
             {loadingUsers ? (
-              <div className="py-16 text-center text-xs text-stone-500 font-mono animate-pulse">
-                Caricamento degli account utente...
+              <div className="py-12 text-center text-xs text-stone-500 font-mono animate-pulse">
+                Caricamento giocatori in corso...
               </div>
             ) : users.length === 0 ? (
-              <div className="py-12 text-center rounded-2xl border border-amber-950/10 bg-black/15">
-                <Users className="w-8 h-8 text-stone-700 mx-auto mb-2" />
-                <p className="text-xs text-stone-500 font-semibold">Nessun utente registrato trovato nel database.</p>
-                <p className="text-[10px] text-stone-600 mt-1">Registrati dal modulo di gioco o clicca su "Aggiungi Giocatore" sopra.</p>
+              <div className="py-12 text-center rounded-2xl border border-amber-950/10 bg-black/10">
+                <Users className="w-8 h-8 text-stone-700 mx-auto mb-2.5" />
+                <p className="text-xs text-stone-500">Nessun utente registrato nel sistema.</p>
               </div>
             ) : (
               <div className="overflow-x-auto rounded-xl border border-amber-950/20 bg-black/20">
@@ -1100,6 +1148,13 @@ export default function AdminPanel() {
                         </td>
                         <td className="px-4 py-3.5 text-right space-x-1 shrink-0 whitespace-nowrap">
                           <button
+                            onClick={() => handleResetPasswordClick(user)}
+                            className="p-1.5 bg-blue-950/15 hover:bg-blue-900/30 text-blue-400 hover:text-blue-300 rounded border border-blue-900/20 transition-all cursor-pointer"
+                            title="Resetta password giocatore"
+                          >
+                            <Key className="w-3.5 h-3.5" />
+                          </button>
+                          <button
                             onClick={() => handleEditUserClick(user)}
                             className="p-1.5 bg-amber-950/15 hover:bg-amber-900/30 text-amber-400 hover:text-amber-300 rounded border border-amber-900/20 transition-all cursor-pointer"
                             title="Modifica account giocatore"
@@ -1127,59 +1182,32 @@ export default function AdminPanel() {
             <div className="flex items-center justify-between border-b border-amber-950/40 pb-3">
               <div className="flex items-center gap-2">
                 <Terminal className="w-5 h-5 text-amber-500" />
-                <h3 className="font-serif text-base font-bold text-amber-200">Log di Funzionamento & Debug</h3>
+                <h3 className="font-serif text-base font-bold text-amber-200">Terminal Log delle Operazioni</h3>
               </div>
-              
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[10px] font-mono uppercase tracking-wider text-stone-500 mr-2">Streaming Attivo</span>
-                
-                <button
-                  onClick={fetchLogs}
-                  className="p-1.5 bg-stone-900 hover:bg-stone-800 text-stone-400 hover:text-stone-300 rounded-lg border border-stone-800 transition-all"
-                  title="Aggiorna log adesso"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 ${loadingLogs ? 'animate-spin' : ''}`} />
-                </button>
-              </div>
+              <button 
+                onClick={fetchLogs}
+                title="Aggiorna Log"
+                className="p-1 text-stone-400 hover:text-amber-400 transition-colors"
+              >
+                <RefreshCw className={`w-4 h-4 ${loadingLogs ? 'animate-spin' : ''}`} />
+              </button>
             </div>
 
             <p className="text-stone-400 text-xs leading-relaxed">
-              Questa finestra visualizza i log di sistema dell'app in tempo reale, comprese le query Postgres, i tentativi di login, le registrazioni degli utenti e l'attivazione dei moduli. Molto utile per fare il debug direttamente in produzione.
+              Visualizza in tempo reale le azioni degli utenti (registrazioni, login, match vinti o persi, connessioni DB, invio mail di verifica).
             </p>
 
-            {/* Simulated Linux terminal console for operation traces */}
-            <div className="bg-[#050302] border border-amber-950/40 rounded-xl p-4 font-mono text-[11px] h-60 overflow-y-auto shadow-inner flex flex-col gap-1.5 scrollbar-thin">
+            <div className="bg-[#050302] border border-amber-950/30 rounded-2xl p-4 h-48 overflow-y-auto font-mono text-[10px] text-stone-400 space-y-1.5 shadow-inner">
               {logs.length === 0 ? (
-                <div className="text-stone-600 italic py-16 text-center select-none">
-                  Nessun record di traccia log di sistema caricato. In attesa di operazioni...
-                </div>
+                <div className="text-stone-600 text-center py-12">Nessun log disponibile nel sistema.</div>
               ) : (
-                [...logs].reverse().map((log, index) => {
-                  let badgeColor = 'text-green-500';
-                  let msgColor = 'text-stone-300';
-                  if (log.level === 'warn') {
-                    badgeColor = 'text-amber-500 font-bold';
-                    msgColor = 'text-amber-100/90';
-                  } else if (log.level === 'error') {
-                    badgeColor = 'text-rose-500 font-bold animate-pulse';
-                    msgColor = 'text-rose-200';
-                  }
-
-                  return (
-                    <div key={`log_${index}`} className="flex items-start gap-2 hover:bg-white/5 p-1 rounded transition-colors select-text">
-                      <span className="text-stone-600 shrink-0 font-semibold select-none">
-                        [{new Date(log.timestamp).toLocaleTimeString()}]
-                      </span>
-                      <span className={`${badgeColor} shrink-0 select-none uppercase text-[9px] border border-current px-1 rounded-sm tracking-wider font-bold`}>
-                        {log.level}
-                      </span>
-                      <span className={`${msgColor} break-all whitespace-pre-wrap`}>
-                        {log.message}
-                      </span>
-                    </div>
-                  );
-                })
+                logs.map((log, idx) => (
+                  <div key={log.id || idx} className="flex gap-2.5 items-start leading-relaxed border-b border-amber-950/5 pb-1">
+                    <span className="text-amber-700 select-none">[{log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : '00:00:00'}]</span>
+                    <span className="text-emerald-500 font-bold shrink-0">SYSTEM:</span>
+                    <span className="text-stone-300 break-all">{log.message}</span>
+                  </div>
+                ))
               )}
             </div>
           </div>
@@ -1187,14 +1215,14 @@ export default function AdminPanel() {
         </div>
       )}
 
-      {/* USER CREATION/EDITING DIALOG MODAL */}
+      {/* MODAL PER REGISTRAZIONE / MODIFICA UTENTE */}
       {showUserModal && (
         <div className="fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center z-50 p-4 select-none animate-fade-in">
           <div className="bg-stone-950 border-2 border-[#2d2218] p-6 max-w-md w-full rounded-2xl shadow-2xl relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(217,119,6,0.05)_0%,transparent_60%)] pointer-events-none" />
             
             <h3 className="font-serif text-lg font-bold text-amber-200 border-b border-amber-950/40 pb-3 mb-4">
-              {editingUserId ? 'Modifica Giocatore' : 'Crea Nuovo Giocatore'}
+              {editingUserId ? 'Modifica Account Giocatore' : 'Crea Nuovo Giocatore'}
             </h3>
 
             <form onSubmit={handleSubmitUser} className="space-y-4">
@@ -1310,6 +1338,78 @@ export default function AdminPanel() {
                   className="px-5 py-2 bg-amber-700 hover:bg-amber-600 text-amber-100 rounded-xl border border-amber-600/20 text-xs font-bold transition-all cursor-pointer"
                 >
                   Salva Giocatore
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* RESET PASSWORD DIALOG MODAL */}
+      {resettingUser && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center z-50 p-4 select-none animate-fade-in">
+          <div className="bg-stone-950 border-2 border-[#2d2218] p-6 max-w-md w-full rounded-2xl shadow-2xl relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.05)_0%,transparent_60%)] pointer-events-none" />
+            
+            <h3 className="font-serif text-lg font-bold text-blue-400 border-b border-amber-950/40 pb-3 mb-4 flex items-center gap-2">
+              <Key className="w-5 h-5 text-blue-400" /> Resetta Password Giocatore
+            </h3>
+
+            <p className="text-xs text-stone-400 mb-4 leading-relaxed">
+              Stai reimpostando la password per l'utente <strong className="text-amber-400 font-bold">{resettingUser.username}</strong> ({resettingUser.email}).
+            </p>
+
+            <form onSubmit={handleConfirmResetPassword} className="space-y-4">
+              <div>
+                <label className="block text-[10px] font-mono uppercase tracking-wider text-blue-500 mb-1.5 font-bold">
+                  Nuova Password
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    required
+                    value={newPasswordInput}
+                    onChange={(e) => setNewPasswordInput(e.target.value)}
+                    className="flex-1 bg-[#080504] border border-blue-900/40 rounded-xl px-3 py-2 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-blue-500/50 font-mono font-bold"
+                    placeholder="Inserisci nuova password..."
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setNewPasswordInput('scacchi_' + Math.floor(1000 + Math.random() * 9000))}
+                    className="px-3 py-2 bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-800 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                    title="Genera nuova password casuale"
+                  >
+                    Rigenera
+                  </button>
+                </div>
+              </div>
+
+              {resetError && (
+                <div className="bg-rose-950/20 border border-rose-800/30 rounded-xl p-3 text-rose-400 text-xs text-center font-medium">
+                  {resetError}
+                </div>
+              )}
+
+              {resetSuccess && (
+                <div className="bg-green-950/20 border border-green-800/30 rounded-xl p-3 text-green-400 text-xs text-center font-medium flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                  <span>{resetSuccess}</span>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2.5 pt-4 border-t border-amber-950/30">
+                <button
+                  type="button"
+                  onClick={() => setResettingUser(null)}
+                  className="px-4 py-2 bg-stone-900 hover:bg-stone-800 text-stone-400 rounded-xl border border-stone-800 text-xs font-bold transition-all cursor-pointer"
+                >
+                  Annulla
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-blue-700 hover:bg-blue-600 text-blue-100 rounded-xl border border-blue-600/20 text-xs font-bold transition-all cursor-pointer"
+                >
+                  Conferma Reset
                 </button>
               </div>
             </form>
