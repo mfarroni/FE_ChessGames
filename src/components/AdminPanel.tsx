@@ -1,7 +1,7 @@
 /**
- * Versione: 2.0.0
- * Data e Ora Modifica: 02/07/2026 14:00:52
- * Problema Risolto: Integrazione interfaccia di log console con filtro di audit SMTP per la tracciabilità delle trasmissioni email.
+ * Versione: 2.0.1
+ * Data e Ora Modifica: 02/07/2026 14:28:10
+ * Problema Risolto: Allineamento configurazioni e rimozione commenti non supportati da vercel.json per correggere il deploy.
  */
 
 import React, { useState, useEffect, useRef } from 'react';
