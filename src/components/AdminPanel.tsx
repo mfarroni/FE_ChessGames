@@ -1,3 +1,9 @@
+/**
+ * Versione: 1.0.1
+ * Data e Ora Modifica: 02/07/2026 12:30:15
+ * Problema Risolto: Implementazione selezione dei giocatori (singola o multipla) e relativo pannello di invio email di comunicazioni SMTP da webmaster@granmasterchess.it.
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Lock, 
@@ -104,6 +110,14 @@ export default function AdminPanel() {
   const [newPasswordInput, setNewPasswordInput] = useState<string>('');
   const [resetSuccess, setResetSuccess] = useState<string | null>(null);
   const [resetError, setResetError] = useState<string | null>(null);
+
+  // Selected user IDs for mass/individual emails
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+  const [communicationSubject, setCommunicationSubject] = useState<string>('');
+  const [communicationBody, setCommunicationBody] = useState<string>('');
+  const [isSendingCommunication, setIsSendingCommunication] = useState<boolean>(false);
+  const [communicationSuccess, setCommunicationSuccess] = useState<string | null>(null);
+  const [communicationError, setCommunicationError] = useState<string | null>(null);
 
   // Live Logs states
   const [logs, setLogs] = useState<any[]>([]);
@@ -300,6 +314,61 @@ export default function AdminPanel() {
   const handleDownloadCSV = () => {
     if (!adminToken) return;
     window.open(`/api/admin/users/csv?token=${adminToken}`, '_blank');
+  };
+
+  const handleSendCommunication = async () => {
+    if (!adminToken) return;
+    if (selectedUserIds.length === 0) {
+      setCommunicationError('Seleziona almeno un utente per inviare la comunicazione.');
+      return;
+    }
+    if (!communicationSubject.trim()) {
+      setCommunicationError('L\'oggetto della comunicazione è richiesto.');
+      return;
+    }
+    if (!communicationBody.trim()) {
+      setCommunicationError('Il corpo del messaggio è richiesto.');
+      return;
+    }
+
+    setIsSendingCommunication(true);
+    setCommunicationError(null);
+    setCommunicationSuccess(null);
+
+    try {
+      const selectedEmails = users
+        .filter(u => selectedUserIds.includes(u.id))
+        .map(u => u.email)
+        .filter(Boolean);
+
+      const res = await fetch('/api/admin/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-token': adminToken
+        },
+        body: JSON.stringify({
+          emails: selectedEmails,
+          subject: communicationSubject.trim(),
+          body: communicationBody.trim()
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setCommunicationSuccess(data.message || 'Comunicazione email inviata con successo!');
+        setCommunicationSubject('');
+        setCommunicationBody('');
+        setSelectedUserIds([]);
+        fetchLogs();
+      } else {
+        setCommunicationError(data.message || 'Errore durante l\'invio della comunicazione.');
+      }
+    } catch (err: any) {
+      setCommunicationError('Errore di connessione con il server: ' + err.message);
+    } finally {
+      setIsSendingCommunication(false);
+    }
   };
 
   const fetchDbStatus = async (token: string) => {
@@ -1109,6 +1178,20 @@ export default function AdminPanel() {
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
                     <tr className="bg-stone-950/60 border-b border-amber-950/30 text-[10px] font-mono uppercase tracking-wider text-amber-800 font-bold select-none">
+                      <th className="px-4 py-3 text-center w-12">
+                        <input
+                          type="checkbox"
+                          checked={users.length > 0 && selectedUserIds.length === users.length}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedUserIds(users.map(u => u.id));
+                            } else {
+                              setSelectedUserIds([]);
+                            }
+                          }}
+                          className="rounded border-amber-950/40 bg-stone-900 text-amber-500 focus:ring-amber-500 cursor-pointer"
+                        />
+                      </th>
                       <th className="px-4 py-3">ID / Creato il</th>
                       <th className="px-4 py-3">Username</th>
                       <th className="px-4 py-3">Email</th>
@@ -1120,7 +1203,21 @@ export default function AdminPanel() {
                   </thead>
                   <tbody className="divide-y divide-amber-950/10 text-stone-300">
                     {users.map((user) => (
-                      <tr key={user.id} className="hover:bg-amber-950/5 transition-colors">
+                      <tr key={user.id} className={selectedUserIds.includes(user.id) ? "bg-amber-950/10 hover:bg-amber-950/15 transition-colors" : "hover:bg-amber-950/5 transition-colors"}>
+                        <td className="px-4 py-3.5 text-center w-12">
+                          <input
+                            type="checkbox"
+                            checked={selectedUserIds.includes(user.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedUserIds(prev => [...prev, user.id]);
+                              } else {
+                                setSelectedUserIds(prev => prev.filter(id => id !== user.id));
+                              }
+                            }}
+                            className="rounded border-amber-950/40 bg-stone-900 text-amber-500 focus:ring-amber-500 cursor-pointer"
+                          />
+                        </td>
                         <td className="px-4 py-3.5 font-mono text-[10px] text-stone-500">
                           <div>{user.id}</div>
                           <div className="text-[9px] text-stone-600 mt-0.5">
@@ -1173,6 +1270,101 @@ export default function AdminPanel() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+
+            {/* MASS EMAIL / COMMUNICATION COMPOSER */}
+            {selectedUserIds.length > 0 && (
+              <div className="bg-[#1a0e05]/60 border border-amber-900/40 rounded-2xl p-5 space-y-4 transition-all">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-950/30 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="font-serif text-sm font-bold text-amber-200">Invia Comunicazione Email</h4>
+                      <p className="text-[10px] text-stone-400">
+                        Stai inviando una comunicazione a <strong className="text-amber-400 font-mono">{selectedUserIds.length}</strong> {selectedUserIds.length === 1 ? 'destinatario' : 'destinatari'}.
+                      </p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      setSelectedUserIds([]);
+                      setCommunicationError(null);
+                      setCommunicationSuccess(null);
+                    }}
+                    className="text-[10px] text-amber-600 hover:text-amber-400 font-mono transition-colors text-left"
+                  >
+                    Annulla / Deseleziona Tutti
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] uppercase font-mono tracking-wider text-amber-700 font-bold">Mittente configurato</label>
+                    <input
+                      type="text"
+                      value="webmaster@granmasterchess.it"
+                      disabled
+                      className="w-full text-xs bg-[#090503] border border-amber-950/40 text-stone-400 px-3.5 py-2 rounded-xl cursor-not-allowed font-mono"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] uppercase font-mono tracking-wider text-amber-700 font-bold">Oggetto dell'email</label>
+                    <input
+                      type="text"
+                      placeholder="Esempio: Torneo Straordinario del Circolo degli Scacchi..."
+                      value={communicationSubject}
+                      onChange={(e) => setCommunicationSubject(e.target.value)}
+                      className="w-full text-xs bg-[#090503] border border-amber-950/40 text-stone-200 px-3.5 py-2 rounded-xl focus:border-amber-600/60 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-[10px] uppercase font-mono tracking-wider text-amber-700 font-bold">Corpo del messaggio (HTML o Testo Semplice)</label>
+                  <textarea
+                    rows={6}
+                    placeholder="Scrivi qui la tua comunicazione per i giocatori del circolo..."
+                    value={communicationBody}
+                    onChange={(e) => setCommunicationBody(e.target.value)}
+                    className="w-full text-xs bg-[#090503] border border-amber-950/40 text-stone-200 px-3.5 py-2 rounded-xl focus:border-amber-600/60 focus:outline-none font-sans leading-relaxed"
+                  />
+                </div>
+
+                {communicationError && (
+                  <div className="p-3 bg-rose-950/20 border border-rose-500/10 rounded-xl text-rose-400 text-xs flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{communicationError}</span>
+                  </div>
+                )}
+
+                {communicationSuccess && (
+                  <div className="p-3 bg-emerald-950/20 border border-emerald-500/10 rounded-xl text-emerald-400 text-xs flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span>{communicationSuccess}</span>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-end gap-2.5">
+                  <button
+                    type="button"
+                    disabled={isSendingCommunication}
+                    onClick={handleSendCommunication}
+                    className="px-4 py-2 bg-amber-600 hover:bg-amber-500 disabled:bg-amber-800/40 text-stone-950 text-xs font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-lg shadow-amber-950/30"
+                  >
+                    {isSendingCommunication ? (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" /> Inviando...
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="w-3.5 h-3.5" /> Invia a {selectedUserIds.length} {selectedUserIds.length === 1 ? 'destinatario' : 'destinatari'}
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             )}
           </div>
