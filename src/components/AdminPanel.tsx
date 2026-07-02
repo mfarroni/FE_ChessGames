@@ -1,7 +1,7 @@
 /**
- * Versione: 2.0.3
- * Data e Ora Modifica: 02/07/2026 15:37:30
- * Problema Risolto: Allineamento versione e commenti di modifica dell'accesso amministratori.
+ * Versione: 2.0.4
+ * Data e Ora Modifica: 02/07/2026 15:53:56
+ * Problema Risolto: Allineamento della versione con le modifiche del caricamento delle variabili d'ambiente SMTP.
  */
 
 import React, { useState, useEffect, useRef } from 'react';

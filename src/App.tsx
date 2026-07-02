@@ -1,7 +1,7 @@
 /**
- * Versione: 1.0.0
- * Data e Ora Modifica: 02/07/2026 10:26:03 (Ora di Roma)
- * Problema Risolto: Revisione e inserimento dell'orario di modifica attuale di Roma e versione 1.0.0 in tutti i file.
+ * Versione: 1.0.1
+ * Data e Ora Modifica: 02/07/2026 15:53:56
+ * Problema Risolto: Sincronizzazione delle modifiche di versione con l'inizializzazione del caricamento SMTP del server.
  */
 
 import React, { useState, useEffect, useRef } from 'react';
