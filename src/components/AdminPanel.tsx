@@ -1,7 +1,7 @@
 /**
- * Versione: 1.0.1
- * Data e Ora Modifica: 02/07/2026 12:30:15
- * Problema Risolto: Implementazione selezione dei giocatori (singola o multipla) e relativo pannello di invio email di comunicazioni SMTP da webmaster@granmasterchess.it.
+ * Versione: 2.0.0
+ * Data e Ora Modifica: 02/07/2026 14:00:52
+ * Problema Risolto: Integrazione interfaccia di log console con filtro di audit SMTP per la tracciabilità delle trasmissioni email.
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -122,6 +122,7 @@ export default function AdminPanel() {
   // Live Logs states
   const [logs, setLogs] = useState<any[]>([]);
   const [loadingLogs, setLoadingLogs] = useState<boolean>(false);
+  const [logFilter, setLogFilter] = useState<'all' | 'smtp'>('all');
 
   // Load session token on mount
   useEffect(() => {
@@ -1371,36 +1372,133 @@ export default function AdminPanel() {
 
           {/* SYSTEM OPERATIONS LOGS & DEBUG WINDOW */}
           <div className="glass-panel border border-[#2d2218] p-6 rounded-3xl shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-amber-950/40 pb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-amber-950/40 pb-3 gap-3">
               <div className="flex items-center gap-2">
                 <Terminal className="w-5 h-5 text-amber-500" />
                 <h3 className="font-serif text-base font-bold text-amber-200">Terminal Log delle Operazioni</h3>
               </div>
-              <button 
-                onClick={fetchLogs}
-                title="Aggiorna Log"
-                className="p-1 text-stone-400 hover:text-amber-400 transition-colors"
-              >
-                <RefreshCw className={`w-4 h-4 ${loadingLogs ? 'animate-spin' : ''}`} />
-              </button>
+              
+              <div className="flex items-center gap-2">
+                {/* FILTER TABS */}
+                <div className="flex items-center bg-[#050302] p-0.5 rounded-lg border border-amber-950/20 select-none">
+                  <button
+                    type="button"
+                    onClick={() => setLogFilter('all')}
+                    className={`text-[9px] uppercase font-mono tracking-wider font-bold py-1 px-2.5 rounded-md transition-all ${logFilter === 'all' ? 'bg-amber-600 text-stone-950' : 'text-stone-400 hover:text-stone-200'}`}
+                  >
+                    Tutti i Log
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLogFilter('smtp')}
+                    className={`text-[9px] uppercase font-mono tracking-wider font-bold py-1 px-2.5 rounded-md transition-all flex items-center gap-1 ${logFilter === 'smtp' ? 'bg-amber-600 text-stone-950' : 'text-stone-400 hover:text-stone-200'}`}
+                  >
+                    <Mail className="w-2.5 h-2.5" /> Audit SMTP
+                  </button>
+                </div>
+
+                <button 
+                  onClick={fetchLogs}
+                  title="Aggiorna Log"
+                  className="p-1.5 bg-[#050302] border border-amber-950/20 rounded-lg text-stone-400 hover:text-amber-400 transition-colors flex items-center justify-center"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${loadingLogs ? 'animate-spin' : ''}`} />
+                </button>
+              </div>
             </div>
 
             <p className="text-stone-400 text-xs leading-relaxed">
-              Visualizza in tempo reale le azioni degli utenti (registrazioni, login, match vinti o persi, connessioni DB, invio mail di verifica).
+              {logFilter === 'all' 
+                ? "Visualizza in tempo reale le azioni degli utenti (registrazioni, login, match vinti o persi, connessioni DB, invio mail)." 
+                : "Registro di audit per il tracciamento della trasmissione email SMTP (connessione, autenticazione, invio busta, errori, sandbox)."
+              }
             </p>
 
-            <div className="bg-[#050302] border border-amber-950/30 rounded-2xl p-4 h-48 overflow-y-auto font-mono text-[10px] text-stone-400 space-y-1.5 shadow-inner">
-              {logs.length === 0 ? (
-                <div className="text-stone-600 text-center py-12">Nessun log disponibile nel sistema.</div>
-              ) : (
-                logs.map((log, idx) => (
-                  <div key={log.id || idx} className="flex gap-2.5 items-start leading-relaxed border-b border-amber-950/5 pb-1">
-                    <span className="text-amber-700 select-none">[{log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : '00:00:00'}]</span>
-                    <span className="text-emerald-500 font-bold shrink-0">SYSTEM:</span>
-                    <span className="text-stone-300 break-all">{log.message}</span>
-                  </div>
-                ))
-              )}
+            <div className="bg-[#050302] border border-amber-950/30 rounded-2xl p-4 h-64 overflow-y-auto font-mono text-[10px] text-stone-400 space-y-1.5 shadow-inner">
+              {(() => {
+                const filteredLogs = logFilter === 'all'
+                  ? logs
+                  : logs.filter(log => 
+                      log.message.includes('[SMTP_') || 
+                      log.message.includes('[EMAIL') || 
+                      log.message.includes('[CONFIG SMTP]') || 
+                      log.message.includes('[MOCK EMAIL]') || 
+                      log.message.includes('[ERRORE SMTP]')
+                    );
+
+                if (filteredLogs.length === 0) {
+                  return (
+                    <div className="text-stone-600 text-center py-20">
+                      {logFilter === 'all' ? 'Nessun log disponibile nel sistema.' : 'Nessun evento di audit SMTP registrato.'}
+                    </div>
+                  );
+                }
+
+                return filteredLogs.map((log, idx) => {
+                  const timestampStr = log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : '00:00:00';
+                  let label = 'SYSTEM:';
+                  let labelColor = 'text-emerald-500';
+                  let textColor = 'text-stone-300';
+                  let message = log.message;
+
+                  if (log.message.includes('[SMTP_CONNECT]')) {
+                    label = 'SMTP [CONN]:';
+                    labelColor = 'text-sky-500';
+                    textColor = 'text-sky-300';
+                    message = log.message.replace('[SMTP_CONNECT] ', '');
+                  } else if (log.message.includes('[SMTP_AUTH]')) {
+                    label = 'SMTP [AUTH]:';
+                    labelColor = 'text-amber-500';
+                    textColor = 'text-amber-200';
+                    message = log.message.replace('[SMTP_AUTH] ', '');
+                  } else if (log.message.includes('[SMTP_DISPATCH]')) {
+                    label = 'SMTP [SEND]:';
+                    labelColor = 'text-violet-500';
+                    textColor = 'text-violet-300';
+                    message = log.message.replace('[SMTP_DISPATCH] ', '');
+                  } else if (log.message.includes('[SMTP_SUCCESS]')) {
+                    label = 'SMTP [OK]:';
+                    labelColor = 'text-emerald-500';
+                    textColor = 'text-emerald-400 font-semibold';
+                    message = log.message.replace('[SMTP_SUCCESS] ', '');
+                  } else if (log.message.includes('[SMTP_ERROR]')) {
+                    label = 'SMTP [ERR]:';
+                    labelColor = 'text-rose-500 font-bold';
+                    textColor = 'text-rose-400 font-semibold';
+                    message = log.message.replace('[SMTP_ERROR] ', '');
+                  } else if (log.message.includes('[SMTP_BYPASS]')) {
+                    label = 'SMTP [BYPS]:';
+                    labelColor = 'text-stone-500';
+                    textColor = 'text-stone-400';
+                    message = log.message.replace('[SMTP_BYPASS] ', '');
+                  } else if (log.message.includes('[SMTP_CONFIG]') || log.message.includes('[CONFIG SMTP]')) {
+                    label = 'SMTP [CONF]:';
+                    labelColor = 'text-teal-500';
+                    textColor = 'text-teal-300';
+                    message = log.message.replace('[SMTP_CONFIG] ', '').replace('[CONFIG SMTP] ', '');
+                  } else if (log.message.includes('[EMAIL INVIATA]')) {
+                    label = 'SMTP [SEND]:';
+                    labelColor = 'text-emerald-500';
+                    textColor = 'text-stone-300';
+                  } else if (log.message.includes('[ERRORE SMTP]')) {
+                    label = 'SMTP [ERR]:';
+                    labelColor = 'text-rose-500';
+                    textColor = 'text-stone-300';
+                  } else if (log.message.includes('[MOCK EMAIL]')) {
+                    label = 'SMTP [MOCK]:';
+                    labelColor = 'text-amber-600';
+                    textColor = 'text-stone-300';
+                  }
+
+                  return (
+                    <div key={log.id || idx} className="flex gap-2.5 items-start leading-relaxed border-b border-amber-950/5 pb-1 select-text">
+                      <span className="text-amber-700/80 select-none shrink-0">[{timestampStr}]</span>
+                      <span className={`${labelColor} font-bold shrink-0 font-mono`}>{label}</span>
+                      <span className={`${textColor} break-all`}>{message}</span>
+                    </div>
+                  );
+                });
+              })()}
             </div>
           </div>
 
