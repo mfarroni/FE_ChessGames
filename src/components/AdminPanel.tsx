@@ -1,7 +1,7 @@
 /**
- * Versione: 2.0.1
- * Data e Ora Modifica: 02/07/2026 14:28:10
- * Problema Risolto: Allineamento configurazioni e rimozione commenti non supportati da vercel.json per correggere il deploy.
+ * Versione: 2.0.3
+ * Data e Ora Modifica: 02/07/2026 15:37:30
+ * Problema Risolto: Allineamento versione e commenti di modifica dell'accesso amministratori.
  */
 
 import React, { useState, useEffect, useRef } from 'react';
