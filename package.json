@@ -1,10 +1,10 @@
 {
-  "_comment_version": "1.0.0",
-  "_comment_datetime": "02/07/2026 10:26:03 (Ora di Roma)",
-  "_comment_description": "Revisione e inserimento dell'orario di modifica attuale di Roma e versione 1.0.0 in tutti i file.",
+  "_comment_version": "1.1.0",
+  "_comment_datetime": "03/07/2026 09:56:41 (Ora di Roma)",
+  "_comment_description": "Introduzione routing react-router-dom con pagine separate Home/Login/Registrazione/Lobby/Partita e timeout sessione per inattività 30 minuti.",
   "name": "chess-frontend",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,7 +17,8 @@
     "lucide-react": "^0.379.0",
     "motion": "^11.11.17",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
   },
   "devDependencies": {
     "@types/canvas-confetti": "^1.6.4",
