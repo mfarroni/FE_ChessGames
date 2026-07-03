@@ -1,7 +1,7 @@
 /**
- * Versione: 2.0.4
- * Data e Ora Modifica: 02/07/2026 15:53:56
- * Problema Risolto: Allineamento della versione con le modifiche del caricamento delle variabili d'ambiente SMTP.
+ * Versione: 2.0.5
+ * Data e Ora Modifica: 03/07/2026 (Ora di Roma)
+ * Problema Risolto: Sostituzione configurazione SMTP con configurazione Brevo (email transazionali) nel pannello admin.
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -65,16 +65,15 @@ export default function AdminPanel() {
   const [dbConfigSuccess, setDbConfigSuccess] = useState<string | null>(null);
   const [testingConnection, setTestingConnection] = useState<boolean>(false);
 
-  // SMTP Config inputs
-  const [smtpHost, setSmtpHost] = useState<string>('');
-  const [smtpPort, setSmtpPort] = useState<string>('');
-  const [smtpUser, setSmtpUser] = useState<string>('');
-  const [smtpPass, setSmtpPass] = useState<string>('');
-  const [smtpFrom, setSmtpFrom] = useState<string>('');
-  const [smtpIsEnvVar, setSmtpIsEnvVar] = useState<boolean>(false);
-  const [smtpConfigError, setSmtpConfigError] = useState<string | null>(null);
-  const [smtpConfigSuccess, setSmtpConfigSuccess] = useState<string | null>(null);
-  const [savingSmtp, setSavingSmtp] = useState<boolean>(false);
+  // Brevo (Email) Config inputs
+  const [brevoApiKeyInput, setBrevoApiKeyInput] = useState<string>('');
+  const [brevoApiKeyMasked, setBrevoApiKeyMasked] = useState<string | null>(null);
+  const [brevoSenderEmail, setBrevoSenderEmail] = useState<string>('');
+  const [brevoSenderName, setBrevoSenderName] = useState<string>('');
+  const [brevoConfigured, setBrevoConfigured] = useState<boolean>(false);
+  const [brevoConfigError, setBrevoConfigError] = useState<string | null>(null);
+  const [brevoConfigSuccess, setBrevoConfigSuccess] = useState<string | null>(null);
+  const [savingBrevo, setSavingBrevo] = useState<boolean>(false);
 
   // Tracks list
   const [tracks, setTracks] = useState<MusicTrack[]>([]);
@@ -133,7 +132,7 @@ export default function AdminPanel() {
       setAdminToken(storedToken);
       setAdminUsername(storedUser);
       fetchDbStatus(storedToken);
-      fetchSmtpConfig(storedToken);
+      fetchBrevoConfig(storedToken);
       fetchTracks();
     }
   }, []);
@@ -389,60 +388,57 @@ export default function AdminPanel() {
     }
   };
 
-  const fetchSmtpConfig = async (token: string) => {
+  const fetchBrevoConfig = async (token: string) => {
     try {
-      const res = await fetch('/api/admin/config/smtp', {
+      const res = await fetch('/api/admin/config/brevo', {
         headers: { 'x-admin-token': token }
       });
       const data = await res.json();
-      if (data.success && data.smtp) {
-        setSmtpHost(data.smtp.host || '');
-        setSmtpPort(data.smtp.port || '');
-        setSmtpUser(data.smtp.user || '');
-        setSmtpPass(data.smtp.pass || '');
-        setSmtpFrom(data.smtp.from || '');
-        setSmtpIsEnvVar(!!data.isEnvVar);
+      if (data.success && data.config) {
+        setBrevoConfigured(!!data.config.configured);
+        setBrevoApiKeyMasked(data.config.apiKeyMasked || null);
+        setBrevoSenderEmail(data.config.senderEmail || '');
+        setBrevoSenderName(data.config.senderName || '');
       }
     } catch (err) {
-      console.error('Failed to fetch SMTP config:', err);
+      console.error('Failed to fetch Brevo config:', err);
     }
   };
 
-  const handleSaveSmtpConfig = async (e: React.FormEvent) => {
+  const handleSaveBrevoConfig = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSmtpConfigError(null);
-    setSmtpConfigSuccess(null);
-    setSavingSmtp(true);
+    setBrevoConfigError(null);
+    setBrevoConfigSuccess(null);
+    setSavingBrevo(true);
 
     try {
-      const res = await fetch('/api/admin/config/smtp', {
+      const res = await fetch('/api/admin/config/brevo', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'x-admin-token': adminToken || ''
         },
-        body: JSON.stringify({ 
-          host: smtpHost,
-          port: smtpPort,
-          user: smtpUser,
-          pass: smtpPass,
-          from: smtpFrom
+        body: JSON.stringify({
+          apiKey: brevoApiKeyInput.trim() || undefined,
+          senderEmail: brevoSenderEmail,
+          senderName: brevoSenderName
         })
       });
       const data = await res.json();
 
       if (res.ok && data.success) {
-        setSmtpConfigSuccess(data.message);
+        setBrevoConfigSuccess(data.message || 'Configurazione Brevo salvata con successo!');
+        setBrevoApiKeyInput('');
         if (adminToken) {
-          fetchSmtpConfig(adminToken);
+          fetchBrevoConfig(adminToken);
         }
       } else {
-        setSmtpConfigError(data.message || 'Errore di salvataggio.');
+        setBrevoConfigError(data.message || 'Errore di salvataggio.');
       }
     } catch (err: any) {
-      setSmtpConfigError('Impossibile connettersi al server per salvare la configurazione SMTP.');
+      setBrevoConfigError('Impossibile connettersi al server per salvare la configurazione Brevo.');
     } finally {
-      setSavingSmtp(false);
+      setSavingBrevo(false);
     }
   };
 
@@ -485,7 +481,7 @@ export default function AdminPanel() {
         sessionStorage.setItem('admin_token', data.token);
         sessionStorage.setItem('admin_username', data.username);
         fetchDbStatus(data.token);
-        fetchSmtpConfig(data.token);
+        fetchBrevoConfig(data.token);
         fetchTracks();
       } else {
         setLoginError(data.message || 'Credenziali non valide.');
@@ -878,115 +874,95 @@ export default function AdminPanel() {
                 </form>
               </div>
 
-              {/* SMTP Configuration Card */}
+              {/* Brevo (Email) Configuration Card */}
               <div className="glass-panel border border-[#2d2218] p-6 rounded-3xl shadow-xl">
-                <div className="flex items-center gap-2 border-b border-amber-950/40 pb-3 mb-4">
-                  <Mail className="w-5 h-5 text-amber-500" />
-                  <h3 className="font-serif text-base font-bold text-amber-200">Configurazione Servizio Email SMTP</h3>
+                <div className="flex items-center justify-between gap-2 border-b border-amber-950/40 pb-3 mb-4">
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-5 h-5 text-amber-500" />
+                    <h3 className="font-serif text-base font-bold text-amber-200">Configurazione Brevo (Email)</h3>
+                  </div>
+                  {brevoConfigured ? (
+                    <span className="inline-flex items-center gap-1 text-[9px] font-mono uppercase tracking-wider bg-green-950/30 border border-green-600/20 px-2 py-1 rounded-full text-green-400 font-bold">
+                      <CheckCircle2 className="w-3 h-3" /> Configurato
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-[9px] font-mono uppercase tracking-wider bg-stone-900 border border-stone-800 px-2 py-1 rounded-full text-stone-400 font-bold">
+                      <AlertCircle className="w-3 h-3" /> Non configurato
+                    </span>
+                  )}
                 </div>
 
                 <p className="text-stone-400 text-xs mb-4 leading-relaxed">
-                  Configura i parametri del tuo server SMTP per l'invio reale delle email di verifica. Se lasciati vuoti, il sistema utilizzerà i valori di fallback locali o le variabili d'ambiente.
+                  Configura l'invio delle email transazionali (verifica account, notifiche, comunicazioni) tramite <strong className="text-amber-400">Brevo</strong>.
                 </p>
 
-                {smtpIsEnvVar && (
-                  <div className="mb-4 p-3 rounded-xl border border-amber-500/20 bg-amber-950/10 flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-                    <p className="text-[10px] text-amber-400 font-mono leading-relaxed">
-                      SMTP configurato e sovrascritto tramite variabili d'ambiente del server (.env). Le modifiche effettuate qui prenderanno precedenza se non impostate in locale.
-                    </p>
-                  </div>
-                )}
-
-                <form onSubmit={handleSaveSmtpConfig} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-800 mb-1.5 font-bold">
-                        Host SMTP
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="E.g. smtp.gmail.com"
-                        value={smtpHost}
-                        onChange={(e) => setSmtpHost(e.target.value)}
-                        className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-amber-500/50 transition-all font-mono"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-800 mb-1.5 font-bold">
-                        Porta SMTP
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="E.g. 465 o 587"
-                        value={smtpPort}
-                        onChange={(e) => setSmtpPort(e.target.value)}
-                        className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-amber-500/50 transition-all font-mono"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-800 mb-1.5 font-bold">
-                        Username / Email SMTP
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="E.g. utente@gmail.com"
-                        value={smtpUser}
-                        onChange={(e) => setSmtpUser(e.target.value)}
-                        className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-amber-500/50 transition-all font-mono"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-800 mb-1.5 font-bold">
-                        Password SMTP / App Password
-                      </label>
-                      <input
-                        type="password"
-                        placeholder="••••••••••••"
-                        value={smtpPass}
-                        onChange={(e) => setSmtpPass(e.target.value)}
-                        className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-amber-500/50 transition-all font-mono"
-                      />
-                    </div>
-                  </div>
-
+                <form onSubmit={handleSaveBrevoConfig} className="space-y-4">
                   <div>
                     <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-800 mb-1.5 font-bold">
-                      Mittente Personalizzato (SMTP_FROM)
+                      API Key Brevo
                     </label>
                     <input
-                      type="text"
-                      placeholder='E.g. "Club Scacchi" <no-reply@circoloscacchi.it>'
-                      value={smtpFrom}
-                      onChange={(e) => setSmtpFrom(e.target.value)}
+                      type="password"
+                      placeholder={brevoApiKeyMasked || 'Inserisci la API Key Brevo'}
+                      value={brevoApiKeyInput}
+                      onChange={(e) => setBrevoApiKeyInput(e.target.value)}
                       className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-amber-500/50 transition-all font-mono"
                     />
+                    <p className="text-[10px] text-stone-500 mt-1.5 leading-relaxed">
+                      Lascia vuoto per mantenere la chiave già salvata. Usa una API Key standard di Brevo (SMTP & API → API Keys), NON quella con scope MCP.
+                    </p>
                   </div>
 
-                  {smtpConfigError && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-800 mb-1.5 font-bold">
+                        Email Mittente
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="E.g. no-reply@circoloscacchi.it"
+                        value={brevoSenderEmail}
+                        onChange={(e) => setBrevoSenderEmail(e.target.value)}
+                        className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-amber-500/50 transition-all font-mono"
+                      />
+                      <p className="text-[10px] text-stone-500 mt-1.5 leading-relaxed">
+                        Deve essere un mittente verificato / dominio autenticato su Brevo.
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-800 mb-1.5 font-bold">
+                        Nome Mittente
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="E.g. Club Scacchi"
+                        value={brevoSenderName}
+                        onChange={(e) => setBrevoSenderName(e.target.value)}
+                        className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-amber-500/50 transition-all font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  {brevoConfigError && (
                     <div className="bg-rose-950/20 border border-rose-800/30 rounded-xl p-3 text-rose-400 text-xs text-center font-medium font-mono">
-                      {smtpConfigError}
+                      {brevoConfigError}
                     </div>
                   )}
 
-                  {smtpConfigSuccess && (
+                  {brevoConfigSuccess && (
                     <div className="bg-green-950/20 border border-green-800/30 rounded-xl p-3 text-green-400 text-xs text-center font-medium">
-                      {smtpConfigSuccess}
+                      {brevoConfigSuccess}
                     </div>
                   )}
 
                   <button
                     type="submit"
-                    disabled={savingSmtp}
+                    disabled={savingBrevo}
                     className="px-5 py-2.5 bg-[#251711] hover:bg-[#3d271c] text-amber-200 text-xs font-bold rounded-xl border border-amber-800/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                   >
-                    {savingSmtp ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
-                    Salva Configurazione SMTP
+                    {savingBrevo ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
+                    Salva Configurazione Brevo
                   </button>
                 </form>
               </div>
