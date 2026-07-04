@@ -1,7 +1,7 @@
 /**
- * Versione: 2.0.5
- * Data e Ora Modifica: 03/07/2026 (Ora di Roma)
- * Problema Risolto: Sostituzione configurazione SMTP con configurazione Brevo (email transazionali) nel pannello admin.
+ * Versione: 2.1.0
+ * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
+ * Problema Risolto: Introduzione sistema di 3 temi colore accessibili (Scuro Elegante, Chiaro Pergamena, Alto Contrasto) selezionabili da ogni pagina, scacchiera esclusa.
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -661,7 +661,7 @@ export default function AdminPanel() {
             e.preventDefault();
             window.location.href = '/';
           }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-amber-200 text-xs font-semibold border border-stone-800 transition-all cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-app-panel hover:bg-app-panel/70 text-app-text text-xs font-semibold border border-app-border transition-all cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" /> Ritorna alla Lobby del Gioco
         </a>
@@ -669,7 +669,7 @@ export default function AdminPanel() {
         {isAdminLoggedIn && (
           <button
             onClick={handleLogout}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-950/20 hover:bg-rose-950/40 text-rose-400 text-xs font-semibold border border-rose-900/30 transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-app-danger-bg hover:opacity-80 text-app-danger-text text-xs font-semibold border border-app-danger-text/30 transition-all cursor-pointer"
           >
             <LogOut className="w-4 h-4" /> Esci Sessione
           </button>
@@ -678,22 +678,22 @@ export default function AdminPanel() {
 
       {/* LOGIN SCREEN */}
       {!isAdminLoggedIn ? (
-        <div className="w-full max-w-md mx-auto p-8 rounded-3xl glass-panel border border-[#2d2218] shadow-2xl relative overflow-hidden">
+        <div className="w-full max-w-md mx-auto p-8 rounded-3xl glass-panel border border-app-border shadow-2xl relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(217,119,6,0.06)_0%,transparent_60%)] pointer-events-none" />
           
           <div className="text-center mb-8">
-            <div className="w-12 h-12 bg-amber-950/30 border border-amber-600/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Lock className="w-6 h-6 text-amber-500 animate-pulse" />
+            <div className="w-12 h-12 bg-app-accent/30 border border-app-accent/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Lock className="w-6 h-6 text-app-accent animate-pulse" />
             </div>
-            <h2 className="font-serif text-xl font-black text-amber-100">Accesso Amministrazione</h2>
-            <p className="text-stone-400 text-xs mt-1">
+            <h2 className="font-serif text-xl font-black text-app-text">Accesso Amministrazione</h2>
+            <p className="text-app-text-muted text-xs mt-1">
               Inserisci le credenziali di amministratore per gestire il database e caricare i brani MP3.
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-700 mb-1.5 font-bold">
+              <label className="block text-[10px] font-mono uppercase tracking-wider text-app-text-muted mb-1.5 font-bold">
                 Username Amministratore
               </label>
               <input
@@ -701,12 +701,12 @@ export default function AdminPanel() {
                 placeholder="admin"
                 value={loginUser}
                 onChange={(e) => setLoginUser(e.target.value)}
-                className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-4 py-3 text-sm text-stone-100 placeholder-stone-600 outline-none focus:border-amber-500/50 transition-all"
+                className="w-full bg-app-bg border border-app-border rounded-xl px-4 py-3 text-sm text-app-text placeholder-app-text-muted outline-none focus:border-app-accent/50 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-700 mb-1.5 font-bold">
+              <label className="block text-[10px] font-mono uppercase tracking-wider text-app-text-muted mb-1.5 font-bold">
                 Password Amministratore
               </label>
               <input
@@ -714,19 +714,19 @@ export default function AdminPanel() {
                 placeholder="••••••••"
                 value={loginPass}
                 onChange={(e) => setLoginPass(e.target.value)}
-                className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-4 py-3 text-sm text-stone-100 placeholder-stone-600 outline-none focus:border-amber-500/50 transition-all"
+                className="w-full bg-app-bg border border-app-border rounded-xl px-4 py-3 text-sm text-app-text placeholder-app-text-muted outline-none focus:border-app-accent/50 transition-all"
               />
             </div>
 
             {loginError && (
-              <div className="bg-rose-950/20 border border-rose-800/30 rounded-xl p-3 text-rose-400 text-xs text-center font-medium">
+              <div className="bg-app-danger-bg border border-app-danger-text/30 rounded-xl p-3 text-app-danger-text text-xs text-center font-medium">
                 {loginError}
               </div>
             )}
 
             <button
               type="submit"
-              className="w-full py-3.5 bg-gradient-to-r from-amber-700 to-amber-900 hover:from-amber-600 hover:to-amber-800 text-amber-100 rounded-xl font-bold text-sm border border-amber-500/10 shadow-lg cursor-pointer transition transform active:scale-95 outline-none"
+              className="w-full py-3.5 bg-app-accent hover:bg-app-accent-hover text-app-on-accent rounded-xl font-bold text-sm border border-app-accent/10 shadow-lg cursor-pointer transition transform active:scale-95 outline-none"
             >
               Accedi al Pannello
             </button>
@@ -737,11 +737,11 @@ export default function AdminPanel() {
         <div className="space-y-8">
           
           {/* Header Banner */}
-          <div className="glass-panel border border-[#2d2218] p-6 rounded-3xl relative overflow-hidden shadow-xl">
+          <div className="glass-panel border border-app-border p-6 rounded-3xl relative overflow-hidden shadow-xl">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_right,rgba(217,119,6,0.04)_0%,transparent_60%)] pointer-events-none" />
-            <h1 className="font-serif text-2xl font-black text-amber-100">Pannello dell'Amministratore</h1>
-            <p className="text-xs text-stone-400 mt-1">
-              Benvenuto, <strong className="text-amber-500 font-bold">{adminUsername}</strong>. Da qui puoi connettere il database PostgreSQL di Render ed effettuare l'upload di file MP3 di atmosfera.
+            <h1 className="font-serif text-2xl font-black text-app-text">Pannello dell'Amministratore</h1>
+            <p className="text-xs text-app-text-muted mt-1">
+              Benvenuto, <strong className="text-app-accent font-bold">{adminUsername}</strong>. Da qui puoi connettere il database PostgreSQL di Render ed effettuare l'upload di file MP3 di atmosfera.
             </p>
           </div>
 
@@ -752,24 +752,24 @@ export default function AdminPanel() {
             <div className="lg:col-span-7 space-y-8">
               
               {/* PostgreSQL Config Card */}
-              <div className="glass-panel border border-[#2d2218] p-6 rounded-3xl shadow-xl">
-                <div className="flex items-center gap-2 border-b border-amber-950/40 pb-3 mb-4">
-                  <Database className="w-5 h-5 text-amber-500" />
-                  <h3 className="font-serif text-base font-bold text-amber-200">Configurazione Database PostgreSQL</h3>
+              <div className="glass-panel border border-app-border p-6 rounded-3xl shadow-xl">
+                <div className="flex items-center gap-2 border-b border-app-border pb-3 mb-4">
+                  <Database className="w-5 h-5 text-app-accent" />
+                  <h3 className="font-serif text-base font-bold text-app-text">Configurazione Database PostgreSQL</h3>
                 </div>
 
                 {dbStatus && (
-                  <div className="mb-4 p-3.5 rounded-xl border bg-black/45 flex items-start gap-2.5">
+                  <div className="mb-4 p-3.5 rounded-xl border bg-app-bg/45 flex items-start gap-2.5">
                     {dbStatus.postgresConfigured ? (
                       <>
-                        <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 text-app-success-text mt-0.5 shrink-0" />
                         <div>
-                          <p className="text-xs text-green-400 font-semibold">PostgreSQL Connesso!</p>
-                          <p className="text-[10px] text-stone-400 font-mono mt-0.5 truncate max-w-sm">
+                          <p className="text-xs text-app-success-text font-semibold">PostgreSQL Connesso!</p>
+                          <p className="text-[10px] text-app-text-muted font-mono mt-0.5 truncate max-w-sm">
                             {dbStatus.postgresUrl}
                           </p>
                           {dbStatus.isEnvVar && (
-                            <span className="inline-block mt-1 text-[8px] font-mono bg-amber-950/40 border border-amber-500/20 px-2 py-0.5 rounded text-amber-500 uppercase font-semibold">
+                            <span className="inline-block mt-1 text-[8px] font-mono bg-app-accent/40 border border-app-accent/20 px-2 py-0.5 rounded text-app-accent uppercase font-semibold">
                               Configurato tramite variabile d'ambiente
                             </span>
                           )}
@@ -777,10 +777,10 @@ export default function AdminPanel() {
                       </>
                     ) : (
                       <>
-                        <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                        <AlertCircle className="w-4 h-4 text-app-accent mt-0.5 shrink-0" />
                         <div>
-                          <p className="text-xs text-amber-400 font-semibold">Database Locale (JSON) in Uso</p>
-                          <p className="text-[10px] text-stone-400 mt-0.5 leading-relaxed">
+                          <p className="text-xs text-app-accent font-semibold">Database Locale (JSON) in Uso</p>
+                          <p className="text-[10px] text-app-text-muted mt-0.5 leading-relaxed">
                             Nessun database Postgres esterno configurato. Le modifiche verranno salvate localmente nel file JSON del server.
                           </p>
                         </div>
@@ -791,37 +791,37 @@ export default function AdminPanel() {
 
                 <form onSubmit={handleSaveDbConfig} className="space-y-4">
                   <div>
-                    <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-800 mb-1.5 font-bold flex items-center gap-1.5">
+                    <label className="block text-[10px] font-mono uppercase tracking-wider text-app-text-muted mb-1.5 font-bold flex items-center gap-1.5">
                       Stringa di Connessione PostgreSQL (DATABASE_URL)
                     </label>
                     <textarea
                       placeholder="postgresql://username:password@hostname:5432/database?sslmode=require"
                       value={dbConnectionString}
                       onChange={(e) => setDbConnectionString(e.target.value)}
-                      className="w-full h-20 bg-[#080504] border border-amber-900/40 rounded-xl px-4 py-3 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-amber-500/50 transition-all font-mono"
+                      className="w-full h-20 bg-app-bg border border-app-border rounded-xl px-4 py-3 text-xs text-app-text placeholder-app-text-muted outline-none focus:border-app-accent/50 transition-all font-mono"
                     />
                   </div>
 
                   {/* Render Link Guide */}
-                  <div className="p-3 bg-amber-950/10 border border-amber-600/10 rounded-xl flex items-start gap-2 text-[11px] text-stone-400">
-                    <HelpCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                  <div className="p-3 bg-app-accent/10 border border-app-accent/10 rounded-xl flex items-start gap-2 text-[11px] text-app-text-muted">
+                    <HelpCircle className="w-4 h-4 text-app-accent shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-amber-200">Guida Render PostgreSQL</p>
+                      <p className="font-bold text-app-text">Guida Render PostgreSQL</p>
                       <p className="mt-1 leading-relaxed">
-                        Su Render devi copiare la <strong className="text-amber-400">External Database URL (External Connection String)</strong>. 
+                        Su Render devi copiare la <strong className="text-app-accent">External Database URL (External Connection String)</strong>. 
                         Il link "interno" (Internal Database URL) funziona solamente tra servizi che girano dentro la stessa infrastruttura privata di Render, mentre questa app per connettersi da fuori ha bisogno della stringa esterna.
                       </p>
                     </div>
                   </div>
 
                   {dbConfigError && (
-                    <div className="bg-rose-950/20 border border-rose-800/30 rounded-xl p-3 text-rose-400 text-xs text-center font-medium">
+                    <div className="bg-app-danger-bg border border-app-danger-text/30 rounded-xl p-3 text-app-danger-text text-xs text-center font-medium">
                       {dbConfigError}
                     </div>
                   )}
 
                   {dbConfigSuccess && (
-                    <div className="bg-green-950/20 border border-green-800/30 rounded-xl p-3 text-green-400 text-xs text-center font-medium">
+                    <div className="bg-app-success-bg border border-app-success-text/30 rounded-xl p-3 text-app-success-text text-xs text-center font-medium">
                       {dbConfigSuccess}
                     </div>
                   )}
@@ -830,7 +830,7 @@ export default function AdminPanel() {
                     <button
                       type="submit"
                       disabled={testingConnection}
-                      className="px-5 py-2.5 bg-[#251711] hover:bg-[#3d271c] text-amber-200 text-xs font-bold rounded-xl border border-amber-800/30 transition-all flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 cursor-pointer"
+                      className="px-5 py-2.5 bg-app-panel hover:bg-app-panel/70 text-app-text text-xs font-bold rounded-xl border border-app-border transition-all flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 cursor-pointer"
                     >
                       {testingConnection ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Database className="w-3.5 h-3.5" />}
                       Salva e Connetti
@@ -865,7 +865,7 @@ export default function AdminPanel() {
                             setTestingConnection(false);
                           }
                         }}
-                        className="px-4 py-2.5 bg-stone-900 hover:bg-stone-800 text-stone-400 hover:text-stone-300 text-xs font-bold rounded-xl border border-stone-800 transition-all cursor-pointer"
+                        className="px-4 py-2.5 bg-app-panel hover:bg-app-panel/70 text-app-text-muted hover:text-app-text text-xs font-bold rounded-xl border border-app-border transition-all cursor-pointer"
                       >
                         Scollega DB
                       </button>
@@ -875,30 +875,30 @@ export default function AdminPanel() {
               </div>
 
               {/* Brevo (Email) Configuration Card */}
-              <div className="glass-panel border border-[#2d2218] p-6 rounded-3xl shadow-xl">
-                <div className="flex items-center justify-between gap-2 border-b border-amber-950/40 pb-3 mb-4">
+              <div className="glass-panel border border-app-border p-6 rounded-3xl shadow-xl">
+                <div className="flex items-center justify-between gap-2 border-b border-app-border pb-3 mb-4">
                   <div className="flex items-center gap-2">
-                    <Mail className="w-5 h-5 text-amber-500" />
-                    <h3 className="font-serif text-base font-bold text-amber-200">Configurazione Brevo (Email)</h3>
+                    <Mail className="w-5 h-5 text-app-accent" />
+                    <h3 className="font-serif text-base font-bold text-app-text">Configurazione Brevo (Email)</h3>
                   </div>
                   {brevoConfigured ? (
-                    <span className="inline-flex items-center gap-1 text-[9px] font-mono uppercase tracking-wider bg-green-950/30 border border-green-600/20 px-2 py-1 rounded-full text-green-400 font-bold">
+                    <span className="inline-flex items-center gap-1 text-[9px] font-mono uppercase tracking-wider bg-app-success-bg border border-app-success-text/30 px-2 py-1 rounded-full text-app-success-text font-bold">
                       <CheckCircle2 className="w-3 h-3" /> Configurato
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 text-[9px] font-mono uppercase tracking-wider bg-stone-900 border border-stone-800 px-2 py-1 rounded-full text-stone-400 font-bold">
+                    <span className="inline-flex items-center gap-1 text-[9px] font-mono uppercase tracking-wider bg-app-panel border border-app-border px-2 py-1 rounded-full text-app-text-muted font-bold">
                       <AlertCircle className="w-3 h-3" /> Non configurato
                     </span>
                   )}
                 </div>
 
-                <p className="text-stone-400 text-xs mb-4 leading-relaxed">
-                  Configura l'invio delle email transazionali (verifica account, notifiche, comunicazioni) tramite <strong className="text-amber-400">Brevo</strong>.
+                <p className="text-app-text-muted text-xs mb-4 leading-relaxed">
+                  Configura l'invio delle email transazionali (verifica account, notifiche, comunicazioni) tramite <strong className="text-app-accent">Brevo</strong>.
                 </p>
 
                 <form onSubmit={handleSaveBrevoConfig} className="space-y-4">
                   <div>
-                    <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-800 mb-1.5 font-bold">
+                    <label className="block text-[10px] font-mono uppercase tracking-wider text-app-text-muted mb-1.5 font-bold">
                       API Key Brevo
                     </label>
                     <input
@@ -906,16 +906,16 @@ export default function AdminPanel() {
                       placeholder={brevoApiKeyMasked || 'Inserisci la API Key Brevo'}
                       value={brevoApiKeyInput}
                       onChange={(e) => setBrevoApiKeyInput(e.target.value)}
-                      className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-amber-500/50 transition-all font-mono"
+                      className="w-full bg-app-bg border border-app-border rounded-xl px-4 py-2.5 text-xs text-app-text placeholder-app-text-muted outline-none focus:border-app-accent/50 transition-all font-mono"
                     />
-                    <p className="text-[10px] text-stone-500 mt-1.5 leading-relaxed">
+                    <p className="text-[10px] text-app-text-muted mt-1.5 leading-relaxed">
                       Lascia vuoto per mantenere la chiave già salvata. Usa una API Key standard di Brevo (SMTP & API → API Keys), NON quella con scope MCP.
                     </p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-800 mb-1.5 font-bold">
+                      <label className="block text-[10px] font-mono uppercase tracking-wider text-app-text-muted mb-1.5 font-bold">
                         Email Mittente
                       </label>
                       <input
@@ -923,15 +923,15 @@ export default function AdminPanel() {
                         placeholder="E.g. no-reply@circoloscacchi.it"
                         value={brevoSenderEmail}
                         onChange={(e) => setBrevoSenderEmail(e.target.value)}
-                        className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-amber-500/50 transition-all font-mono"
+                        className="w-full bg-app-bg border border-app-border rounded-xl px-4 py-2.5 text-xs text-app-text placeholder-app-text-muted outline-none focus:border-app-accent/50 transition-all font-mono"
                       />
-                      <p className="text-[10px] text-stone-500 mt-1.5 leading-relaxed">
+                      <p className="text-[10px] text-app-text-muted mt-1.5 leading-relaxed">
                         Deve essere un mittente verificato / dominio autenticato su Brevo.
                       </p>
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-800 mb-1.5 font-bold">
+                      <label className="block text-[10px] font-mono uppercase tracking-wider text-app-text-muted mb-1.5 font-bold">
                         Nome Mittente
                       </label>
                       <input
@@ -939,19 +939,19 @@ export default function AdminPanel() {
                         placeholder="E.g. Club Scacchi"
                         value={brevoSenderName}
                         onChange={(e) => setBrevoSenderName(e.target.value)}
-                        className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-amber-500/50 transition-all font-mono"
+                        className="w-full bg-app-bg border border-app-border rounded-xl px-4 py-2.5 text-xs text-app-text placeholder-app-text-muted outline-none focus:border-app-accent/50 transition-all font-mono"
                       />
                     </div>
                   </div>
 
                   {brevoConfigError && (
-                    <div className="bg-rose-950/20 border border-rose-800/30 rounded-xl p-3 text-rose-400 text-xs text-center font-medium font-mono">
+                    <div className="bg-app-danger-bg border border-app-danger-text/30 rounded-xl p-3 text-app-danger-text text-xs text-center font-medium font-mono">
                       {brevoConfigError}
                     </div>
                   )}
 
                   {brevoConfigSuccess && (
-                    <div className="bg-green-950/20 border border-green-800/30 rounded-xl p-3 text-green-400 text-xs text-center font-medium">
+                    <div className="bg-app-success-bg border border-app-success-text/30 rounded-xl p-3 text-app-success-text text-xs text-center font-medium">
                       {brevoConfigSuccess}
                     </div>
                   )}
@@ -959,7 +959,7 @@ export default function AdminPanel() {
                   <button
                     type="submit"
                     disabled={savingBrevo}
-                    className="px-5 py-2.5 bg-[#251711] hover:bg-[#3d271c] text-amber-200 text-xs font-bold rounded-xl border border-amber-800/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                    className="px-5 py-2.5 bg-app-panel hover:bg-app-panel/70 text-app-text text-xs font-bold rounded-xl border border-app-border transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                   >
                     {savingBrevo ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
                     Salva Configurazione Brevo
@@ -968,19 +968,19 @@ export default function AdminPanel() {
               </div>
 
               {/* Upload MP3 Section */}
-              <div className="glass-panel border border-[#2d2218] p-6 rounded-3xl shadow-xl">
-                <div className="flex items-center gap-2 border-b border-amber-950/40 pb-3 mb-4 justify-between">
+              <div className="glass-panel border border-app-border p-6 rounded-3xl shadow-xl">
+                <div className="flex items-center gap-2 border-b border-app-border pb-3 mb-4 justify-between">
                   <div className="flex items-center gap-2">
-                    <Music className="w-5 h-5 text-amber-500" />
-                    <h3 className="font-serif text-base font-bold text-amber-200">Carica Brani MP3</h3>
+                    <Music className="w-5 h-5 text-app-accent" />
+                    <h3 className="font-serif text-base font-bold text-app-text">Carica Brani MP3</h3>
                   </div>
-                  <span className="text-xs font-mono bg-stone-900 px-2.5 py-1 rounded-full border border-stone-800 text-amber-400">
+                  <span className="text-xs font-mono bg-app-panel px-2.5 py-1 rounded-full border border-app-border text-app-accent">
                     {tracks.length}/5 tracce
                   </span>
                 </div>
 
-                <p className="text-stone-400 text-xs mb-4 leading-relaxed">
-                  Carica un file audio in formato <strong className="text-amber-400">.mp3</strong> per la musica di sottofondo d'atmosfera. Puoi caricare file di durata variabile. Limite massimo: 25 MB.
+                <p className="text-app-text-muted text-xs mb-4 leading-relaxed">
+                  Carica un file audio in formato <strong className="text-app-accent">.mp3</strong> per la musica di sottofondo d'atmosfera. Puoi caricare file di durata variabile. Limite massimo: 25 MB.
                 </p>
 
                 {/* Drag & Drop Canvas */}
@@ -992,8 +992,8 @@ export default function AdminPanel() {
                   onClick={handleButtonClick}
                   className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer select-none flex flex-col items-center justify-center gap-2.5 ${
                     dragActive
-                      ? 'border-amber-500 bg-amber-950/10 shadow-[0_0_15px_rgba(217,119,6,0.1)]'
-                      : 'border-amber-900/30 hover:border-amber-600/30 bg-black/10 hover:bg-black/20'
+                      ? 'border-app-accent bg-app-accent/10 shadow-[0_0_15px_rgba(217,119,6,0.1)]'
+                      : 'border-app-border hover:border-app-accent/30 bg-app-bg/10 hover:bg-app-bg/20'
                   }`}
                 >
                   <input
@@ -1003,26 +1003,26 @@ export default function AdminPanel() {
                     accept="audio/mp3,audio/mpeg"
                     className="hidden"
                   />
-                  <div className="w-12 h-12 rounded-xl bg-amber-950/20 border border-amber-600/15 flex items-center justify-center text-amber-400">
+                  <div className="w-12 h-12 rounded-xl bg-app-accent/20 border border-app-accent/15 flex items-center justify-center text-app-accent">
                     {isUploading ? <RefreshCw className="w-6 h-6 animate-spin" /> : <Upload className="w-6 h-6" />}
                   </div>
                   <div>
-                    <p className="text-xs text-amber-100 font-semibold">
+                    <p className="text-xs text-app-text font-semibold">
                       {isUploading ? 'Lettura ed elaborazione file in corso...' : 'Trascina qui il file .mp3 o clicca per sfogliare'}
                     </p>
-                    <p className="text-[10px] text-stone-500 mt-1">Formati supportati: MPEG-3 (.mp3)</p>
+                    <p className="text-[10px] text-app-text-muted mt-1">Formati supportati: MPEG-3 (.mp3)</p>
                   </div>
                 </div>
 
                 {uploadError && (
-                  <div className="bg-rose-950/20 border border-rose-800/30 rounded-xl p-3 text-rose-400 text-xs text-center font-medium mt-4">
+                  <div className="bg-app-danger-bg border border-app-danger-text/30 rounded-xl p-3 text-app-danger-text text-xs text-center font-medium mt-4">
                     {uploadError}
                   </div>
                 )}
 
                 {uploadSuccess && (
-                  <div className="bg-green-950/20 border border-green-800/30 rounded-xl p-3 text-green-400 text-xs text-center font-medium mt-4 flex items-center justify-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+                  <div className="bg-app-success-bg border border-app-success-text/30 rounded-xl p-3 text-app-success-text text-xs text-center font-medium mt-4 flex items-center justify-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-app-success-text shrink-0" />
                     <span>{uploadSuccess}</span>
                   </div>
                 )}
@@ -1032,44 +1032,44 @@ export default function AdminPanel() {
 
             {/* Column 2: Track list */}
             <div className="lg:col-span-5">
-              <div className="glass-panel border border-[#2d2218] p-6 rounded-3xl shadow-xl">
-                <div className="flex items-center justify-between border-b border-amber-950/40 pb-3 mb-4">
-                  <h3 className="font-serif text-base font-bold text-amber-200">Tracce Atmosfera Caricate</h3>
+              <div className="glass-panel border border-app-border p-6 rounded-3xl shadow-xl">
+                <div className="flex items-center justify-between border-b border-app-border pb-3 mb-4">
+                  <h3 className="font-serif text-base font-bold text-app-text">Tracce Atmosfera Caricate</h3>
                   <button 
                     onClick={fetchTracks}
                     title="Aggiorna lista"
-                    className="p-1 text-stone-400 hover:text-amber-400 transition-colors"
+                    className="p-1 text-app-text-muted hover:text-app-accent transition-colors"
                   >
                     <RefreshCw className={`w-4 h-4 ${loadingTracks ? 'animate-spin' : ''}`} />
                   </button>
                 </div>
 
                 {loadingTracks ? (
-                  <div className="py-12 text-center text-xs text-stone-500 font-mono animate-pulse">
+                  <div className="py-12 text-center text-xs text-app-text-muted font-mono animate-pulse">
                     Caricamento brani...
                   </div>
                 ) : tracks.length === 0 ? (
-                  <div className="py-12 text-center rounded-2xl border border-amber-950/10 bg-black/10">
-                    <Music className="w-8 h-8 text-stone-700 mx-auto mb-2.5" />
-                    <p className="text-xs text-stone-500">Nessuna traccia d'atmosfera caricata.</p>
-                    <p className="text-[10px] text-stone-600 mt-1">Carica un file MP3 per cominciare.</p>
+                  <div className="py-12 text-center rounded-2xl border border-app-border bg-app-bg/10">
+                    <Music className="w-8 h-8 text-app-text-muted mx-auto mb-2.5" />
+                    <p className="text-xs text-app-text-muted">Nessuna traccia d'atmosfera caricata.</p>
+                    <p className="text-[10px] text-app-text-muted mt-1">Carica un file MP3 per cominciare.</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {tracks.map((track) => (
                       <div 
                         key={track.id} 
-                        className="flex items-center justify-between p-3 rounded-xl border border-amber-950/20 bg-black/25 hover:bg-black/45 hover:border-amber-900/20 transition-all"
+                        className="flex items-center justify-between p-3 rounded-xl border border-app-border bg-app-bg/25 hover:bg-app-bg/45 hover:border-app-border transition-all"
                       >
                         <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
-                          <div className="w-8 h-8 rounded bg-amber-950/20 border border-amber-600/10 flex items-center justify-center text-amber-400 font-serif font-semibold shrink-0">
+                          <div className="w-8 h-8 rounded bg-app-accent/20 border border-app-accent/10 flex items-center justify-center text-app-accent font-serif font-semibold shrink-0">
                             ♬
                           </div>
                           <div className="min-w-0">
-                            <p className="text-xs text-amber-100 font-semibold truncate" title={track.name}>
+                            <p className="text-xs text-app-text font-semibold truncate" title={track.name}>
                               {track.name}
                             </p>
-                            <p className="text-[9px] text-stone-500 font-mono truncate" title={track.url}>
+                            <p className="text-[9px] text-app-text-muted font-mono truncate" title={track.url}>
                               {track.url.startsWith('/uploads/') ? 'File Caricato' : 'Link Remoto'}
                             </p>
                           </div>
@@ -1077,7 +1077,7 @@ export default function AdminPanel() {
 
                         <button
                           onClick={() => handleDeleteTrack(track.id, track.name)}
-                          className="p-2 bg-rose-950/10 hover:bg-rose-900/30 text-rose-400 rounded-lg border border-rose-900/20 transition-all cursor-pointer"
+                          className="p-2 bg-app-danger-bg hover:opacity-80 text-app-danger-text rounded-lg border border-app-danger-text/30 transition-all cursor-pointer"
                           title="Elimina traccia d'atmosfera"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -1092,15 +1092,15 @@ export default function AdminPanel() {
           </div>
 
           {/* USER MANAGEMENT GESTIONE UTENTI PANEL */}
-          <div className="glass-panel border border-[#2d2218] p-6 rounded-3xl shadow-xl space-y-4">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-amber-950/40 pb-4">
+          <div className="glass-panel border border-app-border p-6 rounded-3xl shadow-xl space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-app-border pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-amber-950/20 border border-amber-600/15 flex items-center justify-center text-amber-400">
+                <div className="w-9 h-9 rounded-xl bg-app-accent/20 border border-app-accent/15 flex items-center justify-center text-app-accent">
                   <Users className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-base font-bold text-amber-200">Gestione Giocatori e Utenti</h3>
-                  <p className="text-[10px] text-stone-400">Vedi, crea, modifica, elimina, e resetta le password dei giocatori.</p>
+                  <h3 className="font-serif text-base font-bold text-app-text">Gestione Giocatori e Utenti</h3>
+                  <p className="text-[10px] text-app-text-muted">Vedi, crea, modifica, elimina, e resetta le password dei giocatori.</p>
                 </div>
               </div>
 
@@ -1120,13 +1120,13 @@ export default function AdminPanel() {
                     setUserFormSuccess(null);
                     setShowUserModal(true);
                   }}
-                  className="px-3.5 py-1.5 bg-[#251711] hover:bg-[#3d271c] text-amber-200 text-xs font-bold rounded-xl border border-amber-800/30 transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-3.5 py-1.5 bg-app-panel hover:bg-app-panel/70 text-app-text text-xs font-bold rounded-xl border border-app-border transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <UserPlus className="w-3.5 h-3.5" /> Nuovo Giocatore
                 </button>
                 <button
                   onClick={handleDownloadCSV}
-                  className="px-3.5 py-1.5 bg-stone-900 hover:bg-stone-800 text-stone-300 text-xs font-bold rounded-xl border border-stone-800 transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-3.5 py-1.5 bg-app-panel hover:bg-app-panel/70 text-app-text text-xs font-bold rounded-xl border border-app-border transition-all flex items-center gap-1.5 cursor-pointer"
                   title="Esporta lista giocatori in CSV"
                 >
                   <Download className="w-3.5 h-3.5" /> Esporta CSV
@@ -1134,7 +1134,7 @@ export default function AdminPanel() {
                 <button
                   onClick={fetchUsers}
                   title="Aggiorna lista giocatori"
-                  className="p-1.5 text-stone-400 hover:text-amber-400 transition-colors"
+                  className="p-1.5 text-app-text-muted hover:text-app-accent transition-colors"
                 >
                   <RefreshCw className={`w-4 h-4 ${loadingUsers ? 'animate-spin' : ''}`} />
                 </button>
@@ -1142,19 +1142,19 @@ export default function AdminPanel() {
             </div>
 
             {loadingUsers ? (
-              <div className="py-12 text-center text-xs text-stone-500 font-mono animate-pulse">
+              <div className="py-12 text-center text-xs text-app-text-muted font-mono animate-pulse">
                 Caricamento giocatori in corso...
               </div>
             ) : users.length === 0 ? (
-              <div className="py-12 text-center rounded-2xl border border-amber-950/10 bg-black/10">
-                <Users className="w-8 h-8 text-stone-700 mx-auto mb-2.5" />
-                <p className="text-xs text-stone-500">Nessun utente registrato nel sistema.</p>
+              <div className="py-12 text-center rounded-2xl border border-app-border bg-app-bg/10">
+                <Users className="w-8 h-8 text-app-text-muted mx-auto mb-2.5" />
+                <p className="text-xs text-app-text-muted">Nessun utente registrato nel sistema.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-xl border border-amber-950/20 bg-black/20">
+              <div className="overflow-x-auto rounded-xl border border-app-border bg-app-bg/20">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="bg-stone-950/60 border-b border-amber-950/30 text-[10px] font-mono uppercase tracking-wider text-amber-800 font-bold select-none">
+                    <tr className="bg-app-bg/60 border-b border-app-border text-[10px] font-mono uppercase tracking-wider text-app-text-muted font-bold select-none">
                       <th className="px-4 py-3 text-center w-12">
                         <input
                           type="checkbox"
@@ -1166,7 +1166,7 @@ export default function AdminPanel() {
                               setSelectedUserIds([]);
                             }
                           }}
-                          className="rounded border-amber-950/40 bg-stone-900 text-amber-500 focus:ring-amber-500 cursor-pointer"
+                          className="rounded border-app-border bg-app-panel text-app-accent focus:ring-app-accent cursor-pointer"
                         />
                       </th>
                       <th className="px-4 py-3">ID / Creato il</th>
@@ -1178,9 +1178,9 @@ export default function AdminPanel() {
                       <th className="px-4 py-3 text-right">Azioni</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-amber-950/10 text-stone-300">
+                  <tbody className="divide-y divide-amber-950/10 text-app-text">
                     {users.map((user) => (
-                      <tr key={user.id} className={selectedUserIds.includes(user.id) ? "bg-amber-950/10 hover:bg-amber-950/15 transition-colors" : "hover:bg-amber-950/5 transition-colors"}>
+                      <tr key={user.id} className={selectedUserIds.includes(user.id) ? "bg-app-accent/10 hover:bg-app-accent/15 transition-colors" : "hover:bg-app-accent/5 transition-colors"}>
                         <td className="px-4 py-3.5 text-center w-12">
                           <input
                             type="checkbox"
@@ -1192,33 +1192,33 @@ export default function AdminPanel() {
                                 setSelectedUserIds(prev => prev.filter(id => id !== user.id));
                               }
                             }}
-                            className="rounded border-amber-950/40 bg-stone-900 text-amber-500 focus:ring-amber-500 cursor-pointer"
+                            className="rounded border-app-border bg-app-panel text-app-accent focus:ring-app-accent cursor-pointer"
                           />
                         </td>
-                        <td className="px-4 py-3.5 font-mono text-[10px] text-stone-500">
+                        <td className="px-4 py-3.5 font-mono text-[10px] text-app-text-muted">
                           <div>{user.id}</div>
-                          <div className="text-[9px] text-stone-600 mt-0.5">
+                          <div className="text-[9px] text-app-text-muted mt-0.5">
                             {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/D'}
                           </div>
                         </td>
-                        <td className="px-4 py-3.5 font-medium text-amber-100 font-serif">
+                        <td className="px-4 py-3.5 font-medium text-app-text font-serif">
                           {user.username}
                         </td>
-                        <td className="px-4 py-3.5 font-mono text-stone-400">
+                        <td className="px-4 py-3.5 font-mono text-app-text-muted">
                           {user.email}
                         </td>
-                        <td className="px-4 py-3.5 font-mono text-[11px] text-stone-400">
-                          <span className="bg-stone-900/40 px-2 py-0.5 rounded border border-stone-800/20" title="Password salvata in chiaro">
+                        <td className="px-4 py-3.5 font-mono text-[11px] text-app-text-muted">
+                          <span className="bg-app-panel/40 px-2 py-0.5 rounded border border-app-border/60" title="Password salvata in chiaro">
                             {user.password || '••••••••'}
                           </span>
                         </td>
-                        <td className="px-4 py-3.5 text-center font-bold text-amber-400 font-mono">
+                        <td className="px-4 py-3.5 text-center font-bold text-app-accent font-mono">
                           🏆 {user.rating} Elo
                         </td>
                         <td className="px-4 py-3.5 text-center font-mono text-[11px]">
-                          <span className="text-emerald-500 font-bold">{user.wins}W</span>
-                          <span className="mx-1 text-stone-600">/</span>
-                          <span className="text-rose-500 font-bold">{user.losses}L</span>
+                          <span className="text-app-success-text font-bold">{user.wins}W</span>
+                          <span className="mx-1 text-app-text-muted">/</span>
+                          <span className="text-app-danger-text font-bold">{user.losses}L</span>
                         </td>
                         <td className="px-4 py-3.5 text-right space-x-1 shrink-0 whitespace-nowrap">
                           <button
@@ -1230,14 +1230,14 @@ export default function AdminPanel() {
                           </button>
                           <button
                             onClick={() => handleEditUserClick(user)}
-                            className="p-1.5 bg-amber-950/15 hover:bg-amber-900/30 text-amber-400 hover:text-amber-300 rounded border border-amber-900/20 transition-all cursor-pointer"
+                            className="p-1.5 bg-app-accent/15 hover:bg-app-accent/10 text-app-accent hover:text-app-accent rounded border border-app-border transition-all cursor-pointer"
                             title="Modifica account giocatore"
                           >
                             <Edit3 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDeleteUser(user.id, user.username)}
-                            className="p-1.5 bg-rose-950/15 hover:bg-rose-900/30 text-rose-400 hover:text-rose-300 rounded border border-rose-900/20 transition-all cursor-pointer"
+                            className="p-1.5 bg-app-danger-bg hover:opacity-80 text-app-danger-text hover:text-app-danger-text rounded border border-app-danger-text/30 transition-all cursor-pointer"
                             title="Elimina giocatore"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -1252,16 +1252,16 @@ export default function AdminPanel() {
 
             {/* MASS EMAIL / COMMUNICATION COMPOSER */}
             {selectedUserIds.length > 0 && (
-              <div className="bg-[#1a0e05]/60 border border-amber-900/40 rounded-2xl p-5 space-y-4 transition-all">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-950/30 pb-3">
+              <div className="bg-app-panel/60 border border-app-border rounded-2xl p-5 space-y-4 transition-all">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-app-border pb-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500">
+                    <div className="w-8 h-8 rounded-lg bg-app-accent/10 flex items-center justify-center text-app-accent">
                       <Mail className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="font-serif text-sm font-bold text-amber-200">Invia Comunicazione Email</h4>
-                      <p className="text-[10px] text-stone-400">
-                        Stai inviando una comunicazione a <strong className="text-amber-400 font-mono">{selectedUserIds.length}</strong> {selectedUserIds.length === 1 ? 'destinatario' : 'destinatari'}.
+                      <h4 className="font-serif text-sm font-bold text-app-text">Invia Comunicazione Email</h4>
+                      <p className="text-[10px] text-app-text-muted">
+                        Stai inviando una comunicazione a <strong className="text-app-accent font-mono">{selectedUserIds.length}</strong> {selectedUserIds.length === 1 ? 'destinatario' : 'destinatari'}.
                       </p>
                     </div>
                   </div>
@@ -1271,7 +1271,7 @@ export default function AdminPanel() {
                       setCommunicationError(null);
                       setCommunicationSuccess(null);
                     }}
-                    className="text-[10px] text-amber-600 hover:text-amber-400 font-mono transition-colors text-left"
+                    className="text-[10px] text-app-accent hover:text-app-accent font-mono transition-colors text-left"
                   >
                     Annulla / Deseleziona Tutti
                   </button>
@@ -1279,46 +1279,46 @@ export default function AdminPanel() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] uppercase font-mono tracking-wider text-amber-700 font-bold">Mittente configurato</label>
+                    <label className="block text-[10px] uppercase font-mono tracking-wider text-app-text-muted font-bold">Mittente configurato</label>
                     <input
                       type="text"
                       value="webmaster@granmasterchess.it"
                       disabled
-                      className="w-full text-xs bg-[#090503] border border-amber-950/40 text-stone-400 px-3.5 py-2 rounded-xl cursor-not-allowed font-mono"
+                      className="w-full text-xs bg-app-bg border border-app-border text-app-text-muted px-3.5 py-2 rounded-xl cursor-not-allowed font-mono"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] uppercase font-mono tracking-wider text-amber-700 font-bold">Oggetto dell'email</label>
+                    <label className="block text-[10px] uppercase font-mono tracking-wider text-app-text-muted font-bold">Oggetto dell'email</label>
                     <input
                       type="text"
                       placeholder="Esempio: Torneo Straordinario del Circolo degli Scacchi..."
                       value={communicationSubject}
                       onChange={(e) => setCommunicationSubject(e.target.value)}
-                      className="w-full text-xs bg-[#090503] border border-amber-950/40 text-stone-200 px-3.5 py-2 rounded-xl focus:border-amber-600/60 focus:outline-none"
+                      className="w-full text-xs bg-app-bg border border-app-border text-app-text px-3.5 py-2 rounded-xl focus:border-app-accent/60 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] uppercase font-mono tracking-wider text-amber-700 font-bold">Corpo del messaggio (HTML o Testo Semplice)</label>
+                  <label className="block text-[10px] uppercase font-mono tracking-wider text-app-text-muted font-bold">Corpo del messaggio (HTML o Testo Semplice)</label>
                   <textarea
                     rows={6}
                     placeholder="Scrivi qui la tua comunicazione per i giocatori del circolo..."
                     value={communicationBody}
                     onChange={(e) => setCommunicationBody(e.target.value)}
-                    className="w-full text-xs bg-[#090503] border border-amber-950/40 text-stone-200 px-3.5 py-2 rounded-xl focus:border-amber-600/60 focus:outline-none font-sans leading-relaxed"
+                    className="w-full text-xs bg-app-bg border border-app-border text-app-text px-3.5 py-2 rounded-xl focus:border-app-accent/60 focus:outline-none font-sans leading-relaxed"
                   />
                 </div>
 
                 {communicationError && (
-                  <div className="p-3 bg-rose-950/20 border border-rose-500/10 rounded-xl text-rose-400 text-xs flex items-center gap-2">
+                  <div className="p-3 bg-app-danger-bg border border-app-danger-text/30 rounded-xl text-app-danger-text text-xs flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 shrink-0" />
                     <span>{communicationError}</span>
                   </div>
                 )}
 
                 {communicationSuccess && (
-                  <div className="p-3 bg-emerald-950/20 border border-emerald-500/10 rounded-xl text-emerald-400 text-xs flex items-center gap-2">
+                  <div className="p-3 bg-app-success-bg border border-app-success-text/30 rounded-xl text-app-success-text text-xs flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 shrink-0" />
                     <span>{communicationSuccess}</span>
                   </div>
@@ -1329,7 +1329,7 @@ export default function AdminPanel() {
                     type="button"
                     disabled={isSendingCommunication}
                     onClick={handleSendCommunication}
-                    className="px-4 py-2 bg-amber-600 hover:bg-amber-500 disabled:bg-amber-800/40 text-stone-950 text-xs font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-lg shadow-amber-950/30"
+                    className="px-4 py-2 bg-app-accent hover:bg-app-accent-hover disabled:bg-app-accent/15 text-app-on-accent text-xs font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-lg shadow-app-accent/20"
                   >
                     {isSendingCommunication ? (
                       <>
@@ -1347,27 +1347,27 @@ export default function AdminPanel() {
           </div>
 
           {/* SYSTEM OPERATIONS LOGS & DEBUG WINDOW */}
-          <div className="glass-panel border border-[#2d2218] p-6 rounded-3xl shadow-xl space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-amber-950/40 pb-3 gap-3">
+          <div className="glass-panel border border-app-border p-6 rounded-3xl shadow-xl space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-app-border pb-3 gap-3">
               <div className="flex items-center gap-2">
-                <Terminal className="w-5 h-5 text-amber-500" />
-                <h3 className="font-serif text-base font-bold text-amber-200">Terminal Log delle Operazioni</h3>
+                <Terminal className="w-5 h-5 text-app-accent" />
+                <h3 className="font-serif text-base font-bold text-app-text">Terminal Log delle Operazioni</h3>
               </div>
               
               <div className="flex items-center gap-2">
                 {/* FILTER TABS */}
-                <div className="flex items-center bg-[#050302] p-0.5 rounded-lg border border-amber-950/20 select-none">
+                <div className="flex items-center bg-app-bg p-0.5 rounded-lg border border-app-border select-none">
                   <button
                     type="button"
                     onClick={() => setLogFilter('all')}
-                    className={`text-[9px] uppercase font-mono tracking-wider font-bold py-1 px-2.5 rounded-md transition-all ${logFilter === 'all' ? 'bg-amber-600 text-stone-950' : 'text-stone-400 hover:text-stone-200'}`}
+                    className={`text-[9px] uppercase font-mono tracking-wider font-bold py-1 px-2.5 rounded-md transition-all ${logFilter === 'all' ? 'bg-app-accent text-app-on-accent' : 'text-app-text-muted hover:text-app-text'}`}
                   >
                     Tutti i Log
                   </button>
                   <button
                     type="button"
                     onClick={() => setLogFilter('smtp')}
-                    className={`text-[9px] uppercase font-mono tracking-wider font-bold py-1 px-2.5 rounded-md transition-all flex items-center gap-1 ${logFilter === 'smtp' ? 'bg-amber-600 text-stone-950' : 'text-stone-400 hover:text-stone-200'}`}
+                    className={`text-[9px] uppercase font-mono tracking-wider font-bold py-1 px-2.5 rounded-md transition-all flex items-center gap-1 ${logFilter === 'smtp' ? 'bg-app-accent text-app-on-accent' : 'text-app-text-muted hover:text-app-text'}`}
                   >
                     <Mail className="w-2.5 h-2.5" /> Audit SMTP
                   </button>
@@ -1376,21 +1376,21 @@ export default function AdminPanel() {
                 <button 
                   onClick={fetchLogs}
                   title="Aggiorna Log"
-                  className="p-1.5 bg-[#050302] border border-amber-950/20 rounded-lg text-stone-400 hover:text-amber-400 transition-colors flex items-center justify-center"
+                  className="p-1.5 bg-app-bg border border-app-border rounded-lg text-app-text-muted hover:text-app-accent transition-colors flex items-center justify-center"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${loadingLogs ? 'animate-spin' : ''}`} />
                 </button>
               </div>
             </div>
 
-            <p className="text-stone-400 text-xs leading-relaxed">
+            <p className="text-app-text-muted text-xs leading-relaxed">
               {logFilter === 'all' 
                 ? "Visualizza in tempo reale le azioni degli utenti (registrazioni, login, match vinti o persi, connessioni DB, invio mail)." 
                 : "Registro di audit per il tracciamento della trasmissione email SMTP (connessione, autenticazione, invio busta, errori, sandbox)."
               }
             </p>
 
-            <div className="bg-[#050302] border border-amber-950/30 rounded-2xl p-4 h-64 overflow-y-auto font-mono text-[10px] text-stone-400 space-y-1.5 shadow-inner">
+            <div className="bg-app-bg border border-app-border rounded-2xl p-4 h-64 overflow-y-auto font-mono text-[10px] text-app-text-muted space-y-1.5 shadow-inner">
               {(() => {
                 const filteredLogs = logFilter === 'all'
                   ? logs
@@ -1404,7 +1404,7 @@ export default function AdminPanel() {
 
                 if (filteredLogs.length === 0) {
                   return (
-                    <div className="text-stone-600 text-center py-20">
+                    <div className="text-app-text-muted text-center py-20">
                       {logFilter === 'all' ? 'Nessun log disponibile nel sistema.' : 'Nessun evento di audit SMTP registrato.'}
                     </div>
                   );
@@ -1413,8 +1413,8 @@ export default function AdminPanel() {
                 return filteredLogs.map((log, idx) => {
                   const timestampStr = log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : '00:00:00';
                   let label = 'SYSTEM:';
-                  let labelColor = 'text-emerald-500';
-                  let textColor = 'text-stone-300';
+                  let labelColor = 'text-app-success-text';
+                  let textColor = 'text-app-text';
                   let message = log.message;
 
                   if (log.message.includes('[SMTP_CONNECT]')) {
@@ -1424,8 +1424,8 @@ export default function AdminPanel() {
                     message = log.message.replace('[SMTP_CONNECT] ', '');
                   } else if (log.message.includes('[SMTP_AUTH]')) {
                     label = 'SMTP [AUTH]:';
-                    labelColor = 'text-amber-500';
-                    textColor = 'text-amber-200';
+                    labelColor = 'text-app-accent';
+                    textColor = 'text-app-text';
                     message = log.message.replace('[SMTP_AUTH] ', '');
                   } else if (log.message.includes('[SMTP_DISPATCH]')) {
                     label = 'SMTP [SEND]:';
@@ -1434,18 +1434,18 @@ export default function AdminPanel() {
                     message = log.message.replace('[SMTP_DISPATCH] ', '');
                   } else if (log.message.includes('[SMTP_SUCCESS]')) {
                     label = 'SMTP [OK]:';
-                    labelColor = 'text-emerald-500';
-                    textColor = 'text-emerald-400 font-semibold';
+                    labelColor = 'text-app-success-text';
+                    textColor = 'text-app-success-text font-semibold';
                     message = log.message.replace('[SMTP_SUCCESS] ', '');
                   } else if (log.message.includes('[SMTP_ERROR]')) {
                     label = 'SMTP [ERR]:';
-                    labelColor = 'text-rose-500 font-bold';
-                    textColor = 'text-rose-400 font-semibold';
+                    labelColor = 'text-app-danger-text font-bold';
+                    textColor = 'text-app-danger-text font-semibold';
                     message = log.message.replace('[SMTP_ERROR] ', '');
                   } else if (log.message.includes('[SMTP_BYPASS]')) {
                     label = 'SMTP [BYPS]:';
-                    labelColor = 'text-stone-500';
-                    textColor = 'text-stone-400';
+                    labelColor = 'text-app-text-muted';
+                    textColor = 'text-app-text-muted';
                     message = log.message.replace('[SMTP_BYPASS] ', '');
                   } else if (log.message.includes('[SMTP_CONFIG]') || log.message.includes('[CONFIG SMTP]')) {
                     label = 'SMTP [CONF]:';
@@ -1454,21 +1454,21 @@ export default function AdminPanel() {
                     message = log.message.replace('[SMTP_CONFIG] ', '').replace('[CONFIG SMTP] ', '');
                   } else if (log.message.includes('[EMAIL INVIATA]')) {
                     label = 'SMTP [SEND]:';
-                    labelColor = 'text-emerald-500';
-                    textColor = 'text-stone-300';
+                    labelColor = 'text-app-success-text';
+                    textColor = 'text-app-text';
                   } else if (log.message.includes('[ERRORE SMTP]')) {
                     label = 'SMTP [ERR]:';
-                    labelColor = 'text-rose-500';
-                    textColor = 'text-stone-300';
+                    labelColor = 'text-app-danger-text';
+                    textColor = 'text-app-text';
                   } else if (log.message.includes('[MOCK EMAIL]')) {
                     label = 'SMTP [MOCK]:';
-                    labelColor = 'text-amber-600';
-                    textColor = 'text-stone-300';
+                    labelColor = 'text-app-accent';
+                    textColor = 'text-app-text';
                   }
 
                   return (
-                    <div key={log.id || idx} className="flex gap-2.5 items-start leading-relaxed border-b border-amber-950/5 pb-1 select-text">
-                      <span className="text-amber-700/80 select-none shrink-0">[{timestampStr}]</span>
+                    <div key={log.id || idx} className="flex gap-2.5 items-start leading-relaxed border-b border-app-border pb-1 select-text">
+                      <span className="text-app-text-muted select-none shrink-0">[{timestampStr}]</span>
                       <span className={`${labelColor} font-bold shrink-0 font-mono`}>{label}</span>
                       <span className={`${textColor} break-all`}>{message}</span>
                     </div>
@@ -1483,18 +1483,18 @@ export default function AdminPanel() {
 
       {/* MODAL PER REGISTRAZIONE / MODIFICA UTENTE */}
       {showUserModal && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center z-50 p-4 select-none animate-fade-in">
-          <div className="bg-stone-950 border-2 border-[#2d2218] p-6 max-w-md w-full rounded-2xl shadow-2xl relative overflow-hidden">
+        <div className="fixed inset-0 bg-app-bg/85 backdrop-blur-sm flex items-center justify-center z-50 p-4 select-none animate-fade-in">
+          <div className="bg-app-bg border-2 border-app-border p-6 max-w-md w-full rounded-2xl shadow-2xl relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(217,119,6,0.05)_0%,transparent_60%)] pointer-events-none" />
             
-            <h3 className="font-serif text-lg font-bold text-amber-200 border-b border-amber-950/40 pb-3 mb-4">
+            <h3 className="font-serif text-lg font-bold text-app-text border-b border-app-border pb-3 mb-4">
               {editingUserId ? 'Modifica Account Giocatore' : 'Crea Nuovo Giocatore'}
             </h3>
 
             <form onSubmit={handleSubmitUser} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-700 mb-1 font-bold">
+                  <label className="block text-[10px] font-mono uppercase tracking-wider text-app-text-muted mb-1 font-bold">
                     Username
                   </label>
                   <input
@@ -1502,13 +1502,13 @@ export default function AdminPanel() {
                     required
                     value={userForm.username}
                     onChange={(e) => setUserForm({ ...userForm, username: e.target.value })}
-                    className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-3 py-2 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-amber-500/50"
+                    className="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-app-text placeholder-app-text-muted outline-none focus:border-app-accent/50"
                     placeholder="E.g. Spassky_99"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-700 mb-1 font-bold">
+                  <label className="block text-[10px] font-mono uppercase tracking-wider text-app-text-muted mb-1 font-bold">
                     Email
                   </label>
                   <input
@@ -1516,14 +1516,14 @@ export default function AdminPanel() {
                     required
                     value={userForm.email}
                     onChange={(e) => setUserForm({ ...userForm, email: e.target.value })}
-                    className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-3 py-2 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-amber-500/50"
+                    className="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-app-text placeholder-app-text-muted outline-none focus:border-app-accent/50"
                     placeholder="E.g. player@mail.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-700 mb-1 font-bold">
+                <label className="block text-[10px] font-mono uppercase tracking-wider text-app-text-muted mb-1 font-bold">
                   {editingUserId ? 'Password (lascia vuota per non modificare)' : 'Password'}
                 </label>
                 <input
@@ -1531,77 +1531,77 @@ export default function AdminPanel() {
                   required={!editingUserId}
                   value={userForm.password}
                   onChange={(e) => setUserForm({ ...userForm, password: e.target.value })}
-                  className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-3 py-2 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-amber-500/50"
+                  className="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-app-text placeholder-app-text-muted outline-none focus:border-app-accent/50"
                   placeholder="Inserisci password di accesso..."
                 />
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-700 mb-1 font-bold">
+                  <label className="block text-[10px] font-mono uppercase tracking-wider text-app-text-muted mb-1 font-bold">
                     Rating Elo
                   </label>
                   <input
                     type="number"
                     value={userForm.rating}
                     onChange={(e) => setUserForm({ ...userForm, rating: Number(e.target.value) })}
-                    className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-3 py-2 text-xs text-stone-100 outline-none focus:border-amber-500/50 font-mono"
+                    className="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-app-text outline-none focus:border-app-accent/50 font-mono"
                     min={500}
                     max={3000}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-700 mb-1 font-bold">
+                  <label className="block text-[10px] font-mono uppercase tracking-wider text-app-text-muted mb-1 font-bold">
                     Vittorie
                   </label>
                   <input
                     type="number"
                     value={userForm.wins}
                     onChange={(e) => setUserForm({ ...userForm, wins: Number(e.target.value) })}
-                    className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-3 py-2 text-xs text-stone-100 outline-none focus:border-amber-500/50 font-mono"
+                    className="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-app-text outline-none focus:border-app-accent/50 font-mono"
                     min={0}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-amber-700 mb-1 font-bold">
+                  <label className="block text-[10px] font-mono uppercase tracking-wider text-app-text-muted mb-1 font-bold">
                     Sconfitte
                   </label>
                   <input
                     type="number"
                     value={userForm.losses}
                     onChange={(e) => setUserForm({ ...userForm, losses: Number(e.target.value) })}
-                    className="w-full bg-[#080504] border border-amber-900/40 rounded-xl px-3 py-2 text-xs text-stone-100 outline-none focus:border-amber-500/50 font-mono"
+                    className="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-app-text outline-none focus:border-app-accent/50 font-mono"
                     min={0}
                   />
                 </div>
               </div>
 
               {userFormError && (
-                <div className="bg-rose-950/20 border border-rose-800/30 rounded-xl p-3 text-rose-400 text-xs text-center font-medium">
+                <div className="bg-app-danger-bg border border-app-danger-text/30 rounded-xl p-3 text-app-danger-text text-xs text-center font-medium">
                   {userFormError}
                 </div>
               )}
 
               {userFormSuccess && (
-                <div className="bg-green-950/20 border border-green-800/30 rounded-xl p-3 text-green-400 text-xs text-center font-medium flex items-center justify-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                <div className="bg-app-success-bg border border-app-success-text/30 rounded-xl p-3 text-app-success-text text-xs text-center font-medium flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-app-success-text" />
                   <span>{userFormSuccess}</span>
                 </div>
               )}
 
-              <div className="flex justify-end gap-2.5 pt-4 border-t border-amber-950/30">
+              <div className="flex justify-end gap-2.5 pt-4 border-t border-app-border">
                 <button
                   type="button"
                   onClick={() => setShowUserModal(false)}
-                  className="px-4 py-2 bg-stone-900 hover:bg-stone-800 text-stone-400 rounded-xl border border-stone-800 text-xs font-bold transition-all cursor-pointer"
+                  className="px-4 py-2 bg-app-panel hover:bg-app-panel/70 text-app-text-muted rounded-xl border border-app-border text-xs font-bold transition-all cursor-pointer"
                 >
                   Annulla
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-amber-700 hover:bg-amber-600 text-amber-100 rounded-xl border border-amber-600/20 text-xs font-bold transition-all cursor-pointer"
+                  className="px-5 py-2 bg-app-accent hover:bg-app-accent-hover text-app-on-accent rounded-xl border border-app-accent text-xs font-bold transition-all cursor-pointer"
                 >
                   Salva Giocatore
                 </button>
@@ -1613,16 +1613,16 @@ export default function AdminPanel() {
 
       {/* RESET PASSWORD DIALOG MODAL */}
       {resettingUser && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center z-50 p-4 select-none animate-fade-in">
-          <div className="bg-stone-950 border-2 border-[#2d2218] p-6 max-w-md w-full rounded-2xl shadow-2xl relative overflow-hidden">
+        <div className="fixed inset-0 bg-app-bg/85 backdrop-blur-sm flex items-center justify-center z-50 p-4 select-none animate-fade-in">
+          <div className="bg-app-bg border-2 border-app-border p-6 max-w-md w-full rounded-2xl shadow-2xl relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.05)_0%,transparent_60%)] pointer-events-none" />
             
-            <h3 className="font-serif text-lg font-bold text-blue-400 border-b border-amber-950/40 pb-3 mb-4 flex items-center gap-2">
+            <h3 className="font-serif text-lg font-bold text-blue-400 border-b border-app-border pb-3 mb-4 flex items-center gap-2">
               <Key className="w-5 h-5 text-blue-400" /> Resetta Password Giocatore
             </h3>
 
-            <p className="text-xs text-stone-400 mb-4 leading-relaxed">
-              Stai reimpostando la password per l'utente <strong className="text-amber-400 font-bold">{resettingUser.username}</strong> ({resettingUser.email}).
+            <p className="text-xs text-app-text-muted mb-4 leading-relaxed">
+              Stai reimpostando la password per l'utente <strong className="text-app-accent font-bold">{resettingUser.username}</strong> ({resettingUser.email}).
             </p>
 
             <form onSubmit={handleConfirmResetPassword} className="space-y-4">
@@ -1636,13 +1636,13 @@ export default function AdminPanel() {
                     required
                     value={newPasswordInput}
                     onChange={(e) => setNewPasswordInput(e.target.value)}
-                    className="flex-1 bg-[#080504] border border-blue-900/40 rounded-xl px-3 py-2 text-xs text-stone-100 placeholder-stone-700 outline-none focus:border-blue-500/50 font-mono font-bold"
+                    className="flex-1 bg-app-bg border border-blue-900/40 rounded-xl px-3 py-2 text-xs text-app-text placeholder-app-text-muted outline-none focus:border-blue-500/50 font-mono font-bold"
                     placeholder="Inserisci nuova password..."
                   />
                   <button
                     type="button"
                     onClick={() => setNewPasswordInput('scacchi_' + Math.floor(1000 + Math.random() * 9000))}
-                    className="px-3 py-2 bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-800 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                    className="px-3 py-2 bg-app-panel hover:bg-app-panel/70 text-app-text border border-app-border rounded-xl text-xs font-bold transition-all cursor-pointer"
                     title="Genera nuova password casuale"
                   >
                     Rigenera
@@ -1651,23 +1651,23 @@ export default function AdminPanel() {
               </div>
 
               {resetError && (
-                <div className="bg-rose-950/20 border border-rose-800/30 rounded-xl p-3 text-rose-400 text-xs text-center font-medium">
+                <div className="bg-app-danger-bg border border-app-danger-text/30 rounded-xl p-3 text-app-danger-text text-xs text-center font-medium">
                   {resetError}
                 </div>
               )}
 
               {resetSuccess && (
-                <div className="bg-green-950/20 border border-green-800/30 rounded-xl p-3 text-green-400 text-xs text-center font-medium flex items-center justify-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                <div className="bg-app-success-bg border border-app-success-text/30 rounded-xl p-3 text-app-success-text text-xs text-center font-medium flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-app-success-text" />
                   <span>{resetSuccess}</span>
                 </div>
               )}
 
-              <div className="flex justify-end gap-2.5 pt-4 border-t border-amber-950/30">
+              <div className="flex justify-end gap-2.5 pt-4 border-t border-app-border">
                 <button
                   type="button"
                   onClick={() => setResettingUser(null)}
-                  className="px-4 py-2 bg-stone-900 hover:bg-stone-800 text-stone-400 rounded-xl border border-stone-800 text-xs font-bold transition-all cursor-pointer"
+                  className="px-4 py-2 bg-app-panel hover:bg-app-panel/70 text-app-text-muted rounded-xl border border-app-border text-xs font-bold transition-all cursor-pointer"
                 >
                   Annulla
                 </button>

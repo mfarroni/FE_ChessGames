@@ -1,7 +1,7 @@
 /**
- * Versione: 1.0.0
- * Data e Ora Modifica: 02/07/2026 10:26:03 (Ora di Roma)
- * Problema Risolto: Revisione e inserimento dell'orario di modifica attuale di Roma e versione 1.0.0 in tutti i file.
+ * Versione: 1.1.0
+ * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
+ * Problema Risolto: Introduzione sistema di 3 temi colore accessibili (Scuro Elegante, Chiaro Pergamena, Alto Contrasto) selezionabili da ogni pagina, scacchiera esclusa.
  */
 
 import React from 'react';
@@ -31,16 +31,16 @@ export default function Leaderboard({ entries, currentUsername }: LeaderboardPro
   };
 
   return (
-    <div 
+    <div
       id="leaderboard-card-container"
-      className="glass-panel border-l border-[#2d2218] border-r border-[#2d2218] border-t border-[#2d2218] border-b border-[#2d2218] rounded-2xl p-5 shadow-2xl relative overflow-hidden flex flex-col h-full"
+      className="glass-panel border border-app-border rounded-2xl p-5 shadow-2xl relative overflow-hidden flex flex-col h-full"
     >
       {/* Spotlight highlight underlay */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(217,119,6,0.05)_0%,transparent_70%)] pointer-events-none" />
 
-      <div className="flex items-center gap-2 mb-4 border-b border-amber-900/20 pb-3">
-        <Trophy className="w-5 h-5 text-amber-500 animate-pulse" />
-        <h2 className="font-serif text-base font-bold text-[#f5e8d0] uppercase tracking-wider">
+      <div className="flex items-center gap-2 mb-4 border-b border-app-border pb-3">
+        <Trophy className="w-5 h-5 text-app-accent animate-pulse" />
+        <h2 className="font-serif text-base font-bold text-app-text uppercase tracking-wider">
           Classifica Maestri
         </h2>
       </div>
@@ -48,7 +48,7 @@ export default function Leaderboard({ entries, currentUsername }: LeaderboardPro
       <div className="overflow-y-auto flex-1 pr-1 max-h-[350px]">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="text-[10px] font-mono uppercase tracking-wider text-amber-500/70 border-b border-amber-950/40 pb-2">
+            <tr className="text-[10px] font-mono uppercase tracking-wider text-app-text-muted border-b border-app-border pb-2">
               <th className="py-2 pl-2">Pos</th>
               <th className="py-2">Giocatore</th>
               <th className="py-2 text-right">W/L</th>
@@ -59,22 +59,22 @@ export default function Leaderboard({ entries, currentUsername }: LeaderboardPro
             {sorted.map((entry, idx) => {
               const isCurrentUser = currentUsername && entry.name.toLowerCase() === currentUsername.toLowerCase();
               return (
-                <tr 
+                <tr
                   key={`${entry.name}_${idx}`}
-                  className={`border-b border-amber-950/20 transition-all duration-300 hover:bg-amber-900/10 ${
-                    isCurrentUser ? 'bg-amber-500/10 text-amber-300 font-semibold border-l-2 border-amber-500' : 'text-stone-300'
+                  className={`border-b border-app-border/60 transition-all duration-300 hover:bg-app-accent/10 ${
+                    isCurrentUser ? 'bg-app-accent/10 text-app-accent font-semibold border-l-2 border-app-accent' : 'text-app-text'
                   }`}
                 >
                   <td className="py-3 pl-2 flex items-center justify-start">
                     {getRankBadge(idx)}
                   </td>
                   <td className="py-3 font-medium text-sm max-w-[120px] truncate">
-                    {entry.name} {isCurrentUser && <span className="text-[9px] bg-amber-500/20 text-amber-400 px-1 py-0.5 rounded ml-1">Tu</span>}
+                    {entry.name} {isCurrentUser && <span className="text-[9px] bg-app-accent/20 text-app-accent px-1 py-0.5 rounded ml-1">Tu</span>}
                   </td>
-                  <td className="py-3 text-right font-mono text-xs text-[#a87d55]">
+                  <td className="py-3 text-right font-mono text-xs text-app-text-muted">
                     {entry.wins}W - {entry.losses}L
                   </td>
-                  <td className="py-3 text-right font-mono text-xs font-bold text-amber-400/90 pr-2">
+                  <td className="py-3 text-right font-mono text-xs font-bold text-app-accent pr-2">
                     {entry.rating}
                   </td>
                 </tr>

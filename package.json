@@ -1,10 +1,10 @@
 {
-  "_comment_version": "1.1.0",
-  "_comment_datetime": "03/07/2026 09:56:41 (Ora di Roma)",
-  "_comment_description": "Introduzione routing react-router-dom con pagine separate Home/Login/Registrazione/Lobby/Partita e timeout sessione per inattività 30 minuti.",
+  "_comment_version": "1.2.0",
+  "_comment_datetime": "04/07/2026 (Ora di Roma)",
+  "_comment_description": "Introduzione sistema di 3 temi colore accessibili (Scuro Elegante, Chiaro Pergamena, Alto Contrasto) selezionabili da ogni pagina, scacchiera esclusa.",
   "name": "chess-frontend",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

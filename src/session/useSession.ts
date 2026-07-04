@@ -1,7 +1,7 @@
 /**
- * Versione: 1.0.0
- * Data e Ora Modifica: 03/07/2026 09:56:41 (Ora di Roma)
- * Problema Risolto: Introduzione del contesto di sessione condiviso (WebSocket, autenticazione, partita attiva) usato dalle pagine instradate con react-router-dom, in sostituzione dello stato monolitico che prima viveva in App.tsx.
+ * Versione: 1.1.0
+ * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
+ * Problema Risolto: Estensione del contesto di sessione con `privacyAccepted`/`setPrivacyAccepted` per il checkbox di consenso privacy in Registrazione.
  */
 
 import { createContext, useContext } from 'react';
@@ -31,6 +31,8 @@ export interface SessionContextValue {
   setRegPassword: (v: string) => void;
   regError: string;
   regSuccess: string;
+  privacyAccepted: boolean;
+  setPrivacyAccepted: (v: boolean) => void;
 
   loginUsername: string;
   setLoginUsername: (v: string) => void;

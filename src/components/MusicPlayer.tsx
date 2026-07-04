@@ -1,7 +1,7 @@
 /**
- * Versione: 1.0.0
- * Data e Ora Modifica: 02/07/2026 10:26:03 (Ora di Roma)
- * Problema Risolto: Revisione e inserimento dell'orario di modifica attuale di Roma e versione 1.0.0 in tutti i file.
+ * Versione: 1.1.0
+ * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
+ * Problema Risolto: Introduzione sistema di 3 temi colore accessibili (Scuro Elegante, Chiaro Pergamena, Alto Contrasto) selezionabili da ogni pagina, scacchiera esclusa.
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -158,11 +158,11 @@ export default function MusicPlayer() {
   };
 
   return (
-    <div id="music-player-widget" className="flex items-center gap-2 bg-[#241c14] px-3 py-1.5 rounded-xl border border-[#3d2f21]">
-      <button 
+    <div id="music-player-widget" className="flex items-center gap-2 bg-app-panel px-3 py-1.5 rounded-xl border border-app-border">
+      <button
         onClick={togglePlay}
         disabled={tracks.length === 0}
-        className={`p-1.5 rounded-lg text-amber-100 hover:bg-amber-900/30 transition-colors ${isPlaying ? 'animate-pulse text-amber-400' : 'text-amber-500/80'}`}
+        className={`p-1.5 rounded-lg text-app-text hover:bg-app-accent/15 transition-colors ${isPlaying ? 'animate-pulse text-app-accent' : 'text-app-text-muted'}`}
         title={isPlaying ? "Sospendi musica" : "Riproduci musica di sottofondo"}
       >
         {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -170,30 +170,30 @@ export default function MusicPlayer() {
 
       <div className="flex flex-col min-w-[110px] md:min-w-[130px]">
         {tracks.length > 0 ? (
-          <select 
-            value={currentTrackIndex} 
+          <select
+            value={currentTrackIndex}
             onChange={handleTrackChange}
-            className="bg-black/60 text-[10px] text-amber-200/90 py-0.5 px-1 rounded border border-amber-900/20 max-w-[150px] outline-none font-sans cursor-pointer"
+            className="bg-app-bg text-[10px] text-app-text py-0.5 px-1 rounded border border-app-border max-w-[150px] outline-none font-sans cursor-pointer"
           >
             {tracks.map((track, idx) => (
-              <option key={track.id} value={idx} className="bg-[#15110d] text-amber-100">
+              <option key={track.id} value={idx} className="bg-app-panel text-app-text">
                 {track.name}
               </option>
             ))}
           </select>
         ) : (
-          <span className="text-[10px] text-amber-500/50">Nessuna musica</span>
+          <span className="text-[10px] text-app-text-muted">Nessuna musica</span>
         )}
       </div>
 
-      <div className="flex items-center gap-1.5 border-l border-[#3d2f21] pl-2">
-        <button 
+      <div className="flex items-center gap-1.5 border-l border-app-border pl-2">
+        <button
           onClick={() => setIsMuted(!isMuted)}
-          className="text-amber-500 hover:text-amber-300 transition-colors p-1 cursor-pointer"
+          className="text-app-accent hover:opacity-80 transition-colors p-1 cursor-pointer"
         >
           {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
         </button>
-        <input 
+        <input
           type="range"
           min="0"
           max="1"
@@ -203,15 +203,15 @@ export default function MusicPlayer() {
             setVolume(parseFloat(e.target.value));
             setIsMuted(false);
           }}
-          className="w-12 h-1 accent-amber-500 rounded bg-black/60 cursor-pointer appearance-none outline-none"
+          className="w-12 h-1 accent-app-accent rounded bg-app-bg cursor-pointer appearance-none outline-none"
           title="Volume musica"
         />
       </div>
 
       {/* Floating alert for audio loading error */}
       {audioError && (
-        <div className="absolute top-18 right-8 bg-red-950/90 border border-red-500/50 rounded-xl px-4 py-2.5 flex items-center gap-2 text-xs text-red-200 z-50 animate-bounce shadow-lg">
-          <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+        <div className="absolute top-18 right-8 bg-app-danger-bg border border-app-danger-text/40 rounded-xl px-4 py-2.5 flex items-center gap-2 text-xs text-app-danger-text z-50 animate-bounce shadow-lg">
+          <AlertCircle className="w-4 h-4 text-app-danger-text shrink-0" />
           <span>{audioError}</span>
         </div>
       )}

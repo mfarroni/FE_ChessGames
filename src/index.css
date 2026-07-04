@@ -1,10 +1,64 @@
 /**
- * Versione: 1.0.0
- * Data e Ora Modifica: 02/07/2026 10:26:03 (Ora di Roma)
- * Problema Risolto: Revisione e inserimento dell'orario di modifica attuale di Roma e versione 1.0.0 in tutti i file.
+ * Versione: 1.1.0
+ * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
+ * Problema Risolto: Introduzione sistema di 3 temi colore accessibili (Scuro Elegante, Chiaro Pergamena, Alto Contrasto) selezionabili da ogni pagina, scacchiera esclusa.
  */
 
 @import "tailwindcss";
+
+/* ==========================================================================
+   Sistema di temi colore accessibili (WCAG AA).
+   Tre palette selezionabili a runtime tramite l'attributo data-theme
+   impostato sull'elemento html da ThemeProvider (vedi src/theme).
+   Le classi utility bg-app, text-app e border-app sono generate
+   automaticamente da Tailwind v4 a partire da questi token @theme.
+   Nessuna di queste variabili tocca le classi wood, board-shadow,
+   piece-shadow e spotlight della scacchiera, che restano invariate.
+   ========================================================================== */
+@theme {
+  --color-app-bg: #120D09;
+  --color-app-panel: #1C140D;
+  --color-app-border: #3D2F21;
+  --color-app-text: #F5EEE0;
+  --color-app-text-muted: #C9B79C;
+  --color-app-accent: #92400E;
+  --color-app-accent-hover: #A8500F;
+  --color-app-on-accent: #FFFFFF;
+  --color-app-danger-bg: #2A0A0A;
+  --color-app-danger-text: #FCA5A5;
+  --color-app-success-bg: #0A2A12;
+  --color-app-success-text: #86EFAC;
+}
+
+:root[data-theme="pergamena"] {
+  --color-app-bg: #FAF7F2;
+  --color-app-panel: #F1E9DC;
+  --color-app-border: #D8CBB5;
+  --color-app-text: #1A140D;
+  --color-app-text-muted: #6B5A45;
+  --color-app-accent: #92400E;
+  --color-app-accent-hover: #7A350C;
+  --color-app-on-accent: #FFFFFF;
+  --color-app-danger-bg: #FDECEC;
+  --color-app-danger-text: #8A1220;
+  --color-app-success-bg: #E9F7EE;
+  --color-app-success-text: #14532D;
+}
+
+:root[data-theme="alto-contrasto"] {
+  --color-app-bg: #000000;
+  --color-app-panel: #101010;
+  --color-app-border: #FFFFFF;
+  --color-app-text: #FFFFFF;
+  --color-app-text-muted: #E5E5E5;
+  --color-app-accent: #FFD400;
+  --color-app-accent-hover: #E6C000;
+  --color-app-on-accent: #000000;
+  --color-app-danger-bg: #1A0000;
+  --color-app-danger-text: #FF6B6B;
+  --color-app-success-bg: #001A05;
+  --color-app-success-text: #6BFF8F;
+}
 
 .wood-dark {
   background: repeating-linear-gradient(45deg, #100c0a, #100c0a 3px, #1c1512 3px, #1c1512 6px);
@@ -19,9 +73,9 @@
   filter: drop-shadow(4px 8px 4px rgba(0,0,0,0.6));
 }
 .glass-panel {
-  background: rgba(20, 15, 10, 0.7);
+  background: color-mix(in srgb, var(--color-app-panel) 70%, transparent);
   backdrop-filter: blur(12px);
-  border-left: 1px solid rgba(255, 191, 105, 0.1);
+  border-left: 1px solid color-mix(in srgb, var(--color-app-accent) 20%, transparent);
 }
 .wood-grain {
   opacity: 0.15;
