@@ -1,7 +1,7 @@
 /**
- * Versione: 1.1.0
- * Data e Ora Modifica: 03/07/2026 09:56:41 (Ora di Roma)
- * Problema Risolto: Introduzione routing react-router-dom con pagine separate Home/Login/Registrazione/Lobby/Partita e timeout sessione per inattività 30 minuti.
+ * Versione: 1.2.0
+ * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
+ * Problema Risolto: Aggiunta la route pubblica /privacy (Informativa sul Trattamento dei Dati Personali) richiamata dal checkbox di consenso in Registrazione.
  */
 
 import React from 'react';
@@ -12,6 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import LobbyPage from './pages/LobbyPage';
 import GamePage from './pages/GamePage';
 import AdminPanel from './components/AdminPanel';
@@ -187,6 +188,7 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route
             path="/lobby"
             element={

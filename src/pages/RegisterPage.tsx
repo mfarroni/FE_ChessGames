@@ -1,11 +1,11 @@
 /**
- * Versione: 1.0.0
- * Data e Ora Modifica: 03/07/2026 09:56:41 (Ora di Roma)
- * Problema Risolto: Estrazione della pagina di Registrazione (form + verifica email OTP) da App.tsx in una pagina instradata con URL proprio (/register).
+ * Versione: 1.1.0
+ * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
+ * Problema Risolto: Aggiunta il checkbox di consenso all'informativa sulla privacy (link a /privacy), obbligatorio per abilitare l'invio del form di registrazione.
  */
 
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useSession } from '../session/useSession';
 import {
   Gamepad2,
@@ -28,6 +28,8 @@ export default function RegisterPage() {
     setRegPassword,
     regError,
     regSuccess,
+    privacyAccepted,
+    setPrivacyAccepted,
     captchaSvg,
     captchaAnswer,
     setCaptchaAnswer,
@@ -265,9 +267,27 @@ export default function RegisterPage() {
             </div>
           )}
 
+          <div className="flex items-start gap-2.5 px-1">
+            <input
+              type="checkbox"
+              id="privacy-consent-checkbox"
+              required
+              checked={privacyAccepted}
+              onChange={(e) => setPrivacyAccepted(e.target.checked)}
+              className="mt-0.5 w-4 h-4 accent-amber-600 bg-[#080504] border border-amber-900/40 rounded outline-none cursor-pointer flex-shrink-0"
+            />
+            <label htmlFor="privacy-consent-checkbox" className="text-[11px] text-stone-400 leading-relaxed font-mono">
+              Accetto l'<Link
+                to="/privacy"
+                target="_blank"
+                className="text-amber-500 hover:text-amber-400 underline"
+              >informativa sul trattamento dei dati personali</Link>
+            </label>
+          </div>
+
           <button
             type="submit"
-            disabled={connectionStatus !== 'connected'}
+            disabled={connectionStatus !== 'connected' || !privacyAccepted}
             className="w-full py-3.5 bg-gradient-to-r from-amber-700 to-amber-900 hover:from-amber-600 hover:to-amber-800 text-amber-100 rounded-xl font-bold text-xs uppercase tracking-wider border border-amber-500/10 shadow-lg cursor-pointer transform transition active:scale-95 outline-none flex items-center justify-center gap-2"
           >
             Verifica e Spedisci Email <ChevronRight className="w-4 h-4" />

@@ -1,7 +1,7 @@
 /**
- * Versione: 1.0.0
- * Data e Ora Modifica: 03/07/2026 09:56:41 (Ora di Roma)
- * Problema Risolto: Estrazione dello stato e della logica condivisa (WebSocket, autenticazione, lobby, partita) da App.tsx in un SessionProvider dedicato, riusato dalle pagine instradate con react-router-dom. Introduzione della scadenza automatica della sessione per inattività.
+ * Versione: 1.1.0
+ * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
+ * Problema Risolto: Aggiunta la gestione del consenso privacy in Registrazione (stato `privacyAccepted`, validazione obbligatoria prima della chiamata al backend, invio di `privacyAccepted`/`privacyPolicyVersion` all'API di registrazione).
  */
 
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
@@ -13,6 +13,7 @@ import { AudioEngine } from '../components/AudioEngine';
 import IdleWarningModal from '../components/IdleWarningModal';
 import { SessionContext, SessionContextValue } from './useSession';
 import { useInactivityLogout } from './useInactivityLogout';
+import { PRIVACY_POLICY_VERSION } from '../constants/privacy';
 
 const PUBLIC_PATHS = new Set(['/', '/login', '/register']);
 
@@ -43,6 +44,7 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
   const [regPassword, setRegPassword] = useState('');
   const [regError, setRegError] = useState('');
   const [regSuccess, setRegSuccess] = useState('');
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
 
   const [loginUsername, setLoginUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -252,6 +254,11 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    if (!privacyAccepted) {
+      setRegError('Devi accettare l\'informativa sulla privacy per registrarti.');
+      return;
+    }
+
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
@@ -261,7 +268,9 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
           email: regEmail.trim(),
           password: regPassword,
           captchaId,
-          captchaAnswer: captchaAnswer.trim()
+          captchaAnswer: captchaAnswer.trim(),
+          privacyAccepted: true,
+          privacyPolicyVersion: PRIVACY_POLICY_VERSION
         })
       });
       const data = await res.json();
@@ -794,6 +803,8 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
     setRegPassword,
     regError,
     regSuccess,
+    privacyAccepted,
+    setPrivacyAccepted,
 
     loginUsername,
     setLoginUsername,
