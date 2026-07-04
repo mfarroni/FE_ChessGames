@@ -1,7 +1,7 @@
 /**
- * Versione: 1.0.0
- * Data e Ora Modifica: 02/07/2026 10:26:03 (Ora di Roma)
- * Problema Risolto: Revisione e inserimento dell'orario di modifica attuale di Roma e versione 1.0.0 in tutti i file.
+ * Versione: 1.1.0
+ * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
+ * Problema Risolto: Introduzione sistema di 3 temi colore accessibili (Scuro Elegante, Chiaro Pergamena, Alto Contrasto) selezionabili da ogni pagina, scacchiera esclusa.
  */
 
 import React from 'react';
@@ -26,16 +26,16 @@ export default function PlayerList({ players, currentPlayerId, onChallenge, isLo
   });
 
   return (
-    <div id="lobby-player-list" className="glass-panel border-l border-[#2d2218] border-r border-[#2d2218] border-t border-[#2d2218] border-b border-[#2d2218] rounded-2xl p-5 shadow-2xl relative overflow-hidden flex flex-col h-full">
+    <div id="lobby-player-list" className="glass-panel border border-app-border rounded-2xl p-5 shadow-2xl relative overflow-hidden flex flex-col h-full">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(217,119,6,0.04)_0%,transparent_70%)] pointer-events-none" />
-      <div className="flex items-center justify-between mb-4 border-b border-amber-900/20 pb-3 relative z-10">
+      <div className="flex items-center justify-between mb-4 border-b border-app-border pb-3 relative z-10">
         <div className="flex items-center gap-2">
-          <Users className="w-5 h-5 text-amber-500" />
-          <h2 className="font-serif text-base font-bold text-[#f5e8d0] uppercase tracking-wider">
+          <Users className="w-5 h-5 text-app-accent" />
+          <h2 className="font-serif text-base font-bold text-app-text uppercase tracking-wider">
             Giocatori Connessi
           </h2>
         </div>
-        <span className="bg-black/40 text-amber-400 font-mono text-xs px-2.5 py-1 rounded-full border border-amber-900/30">
+        <span className="bg-app-bg text-app-accent font-mono text-xs px-2.5 py-1 rounded-full border border-app-border">
           {players.length} Online
         </span>
       </div>
@@ -46,32 +46,32 @@ export default function PlayerList({ players, currentPlayerId, onChallenge, isLo
           const isBusy = player.status === 'occupato';
 
           return (
-            <div 
+            <div
               key={player.id}
               className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-200 ${
-                isSelf 
-                  ? 'bg-amber-950/20 border-amber-500/25 shadow-inner' 
-                  : 'bg-stone-900/50 border-stone-800 hover:border-amber-900/30'
+                isSelf
+                  ? 'bg-app-accent/10 border-app-accent/40 shadow-inner'
+                  : 'bg-app-panel/50 border-app-border hover:border-app-accent/40'
               }`}
             >
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
-                  <span className={`font-semibold text-sm ${isSelf ? 'text-amber-400' : 'text-stone-200'}`}>
+                  <span className={`font-semibold text-sm ${isSelf ? 'text-app-accent' : 'text-app-text'}`}>
                     {player.name}
                   </span>
                   {isSelf && (
-                    <span className="text-[9px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1.5 py-0.2 rounded font-semibold">
+                    <span className="text-[9px] bg-app-accent/10 text-app-accent border border-app-accent/30 px-1.5 py-0.2 rounded font-semibold">
                       Tu
                     </span>
                   )}
                 </div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className={`w-2 h-2 rounded-full ${isBusy ? 'bg-rose-500 shadow-[0_0_6px_#f43f5e]' : 'bg-emerald-500 shadow-[0_0_6px_#10b981]'}`} />
-                  <span className="text-xs text-stone-400 font-mono lowercase">
+                  <span className="text-xs text-app-text-muted font-mono lowercase">
                     {isBusy ? 'occupato' : 'in attesa'}
                   </span>
-                  <span className="text-stone-600 font-mono text-xs">•</span>
-                  <span className="text-xs text-amber-800 font-mono font-semibold">
+                  <span className="text-app-text-muted font-mono text-xs">•</span>
+                  <span className="text-xs text-app-text-muted font-mono font-semibold">
                     {player.rating} Elo
                   </span>
                 </div>
@@ -83,8 +83,8 @@ export default function PlayerList({ players, currentPlayerId, onChallenge, isLo
                   disabled={isBusy || isLobbyPending}
                   className={`px-3 py-1.5 rounded-lg font-semibold text-xs flex items-center gap-1.5 transition-all outline-none duration-150 cursor-pointer ${
                     isBusy
-                      ? 'bg-stone-800 text-stone-500 border border-stone-700 cursor-not-allowed opacity-50'
-                      : 'bg-gradient-to-r from-amber-800 to-amber-950 text-amber-200 border border-amber-600/40 hover:from-amber-700 hover:to-amber-900 active:scale-95 shadow-md'
+                      ? 'bg-app-panel text-app-text-muted border border-app-border cursor-not-allowed opacity-50'
+                      : 'bg-app-accent text-app-on-accent border border-app-accent hover:bg-app-accent-hover active:scale-95 shadow-md'
                   }`}
                   onClick={() => onChallenge(player.id)}
                 >
@@ -97,8 +97,8 @@ export default function PlayerList({ players, currentPlayerId, onChallenge, isLo
         })}
 
         {players.length <= 1 && (
-          <div className="flex flex-col items-center justify-center p-6 text-center text-stone-500">
-            <ShieldAlert className="w-8 h-8 text-stone-600 mb-2" />
+          <div className="flex flex-col items-center justify-center p-6 text-center text-app-text-muted">
+            <ShieldAlert className="w-8 h-8 text-app-text-muted mb-2" />
             <p className="text-xs">
               Attendi che altri sfidanti si connettano, oppure gioca subito contro il Computer AI!
             </p>

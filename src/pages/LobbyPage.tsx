@@ -1,7 +1,7 @@
 /**
- * Versione: 1.0.0
- * Data e Ora Modifica: 03/07/2026 09:56:41 (Ora di Roma)
- * Problema Risolto: Estrazione della pagina Lobby (giocatori online, classifica, sfide, avvio partita) da App.tsx in una pagina instradata e protetta (/lobby).
+ * Versione: 1.1.0
+ * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
+ * Problema Risolto: Introduzione sistema di 3 temi colore accessibili (Scuro Elegante, Chiaro Pergamena, Alto Contrasto) selezionabili da ogni pagina, scacchiera esclusa.
  */
 
 import React from 'react';
@@ -36,27 +36,27 @@ export default function LobbyPage() {
       {incomingChallenge && (
         <div
           id="incoming-challenge-banner"
-          className="w-full max-w-2xl bg-gradient-to-r from-[#20150d] via-[#3d2414] to-[#20150d] border-2 border-amber-600/60 p-6 rounded-2xl shadow-[0_15px_45px_rgba(0,0,0,0.85)] text-center relative overflow-hidden mb-8 animate-pulse z-50"
+          className="w-full max-w-2xl bg-app-panel border-2 border-app-accent/60 p-6 rounded-2xl shadow-[0_15px_45px_rgba(0,0,0,0.85)] text-center relative overflow-hidden mb-8 animate-pulse z-50"
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.08)_0%,transparent_70%)] pointer-events-none" />
-          <h3 className="font-serif text-lg md:text-xl font-bold text-amber-100 flex items-center justify-center gap-2">
+          <h3 className="font-serif text-lg md:text-xl font-bold text-app-text flex items-center justify-center gap-2">
             <span>⚔️ Sfidante al Tavolo ⚔️</span>
           </h3>
-          <p className="text-sm md:text-base text-amber-200 mt-2.5">
-            Il giocatore <strong className="text-amber-400 font-serif font-black italic text-lg">{incomingChallenge.challengerName}</strong> vuole sfidarti: accetti o no?
+          <p className="text-sm md:text-base text-app-text mt-2.5">
+            Il giocatore <strong className="text-app-accent font-serif font-black italic text-lg">{incomingChallenge.challengerName}</strong> vuole sfidarti: accetti o no?
           </p>
           <div className="flex items-center justify-center gap-4 mt-5">
             <button
               id="accept-challenge-btn"
               onClick={handleAcceptChallenge}
-              className="px-6 py-2.5 bg-gradient-to-r from-emerald-700 to-emerald-900 hover:from-emerald-600 hover:to-emerald-800 text-emerald-100 font-serif font-bold text-xs rounded-xl border border-emerald-500/20 shadow-lg cursor-pointer transform transition hover:scale-105 active:scale-95 outline-none"
+              className="px-6 py-2.5 bg-app-success-bg hover:opacity-90 text-app-success-text font-serif font-bold text-xs rounded-xl border border-app-success-text/40 shadow-lg cursor-pointer transform transition hover:scale-105 active:scale-95 outline-none"
             >
               Accetto la sfida
             </button>
             <button
               id="decline-challenge-btn"
               onClick={handleDeclineChallenge}
-              className="px-6 py-2.5 bg-gradient-to-r from-rose-700 to-rose-950 hover:from-rose-600 hover:to-rose-850 text-rose-100 font-serif font-bold text-xs rounded-xl border border-rose-500/20 shadow-lg cursor-pointer transform transition hover:scale-105 active:scale-95 outline-none"
+              className="px-6 py-2.5 bg-app-danger-bg hover:opacity-90 text-app-danger-text font-serif font-bold text-xs rounded-xl border border-app-danger-text/40 shadow-lg cursor-pointer transform transition hover:scale-105 active:scale-95 outline-none"
             >
               Rifiuto la sfida
             </button>
@@ -68,11 +68,11 @@ export default function LobbyPage() {
       {lobbyPending && pendingChallengeTarget && (
         <div
           id="outgoing-challenge-banner"
-          className="w-full max-w-2xl bg-gradient-to-r from-[#140f0c] via-[#211712] to-[#140f0c] border border-amber-900/30 p-4 rounded-xl shadow-lg text-center mb-8 z-50 animate-pulse"
+          className="w-full max-w-2xl bg-app-panel border border-app-border p-4 rounded-xl shadow-lg text-center mb-8 z-50 animate-pulse"
         >
-          <p className="text-xs md:text-sm text-stone-400 font-mono flex items-center justify-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
-            In attesa che <strong className="text-amber-500 font-serif font-bold italic">{pendingChallengeTarget}</strong> accetti o rifiuti la sfida...
+          <p className="text-xs md:text-sm text-app-text-muted font-mono flex items-center justify-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-app-accent animate-ping" />
+            In attesa che <strong className="text-app-accent font-serif font-bold italic">{pendingChallengeTarget}</strong> accetti o rifiuti la sfida...
           </p>
         </div>
       )}
@@ -86,16 +86,16 @@ export default function LobbyPage() {
           {/* Computer Offline Challenge Card */}
           <div
             id="ai-opponent-card"
-            className="glass-panel border border-[#2d2218] rounded-2xl p-6 shadow-2xl relative overflow-hidden"
+            className="glass-panel border border-app-border rounded-2xl p-6 shadow-2xl relative overflow-hidden"
           >
             <div className="absolute right-0 top-0 w-48 h-48 bg-[radial-gradient(circle_at_right,rgba(217,119,6,0.06)_0%,transparent_70%)] pointer-events-none" />
 
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-amber-900/15 pb-4 mb-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-app-border pb-4 mb-4">
               <div>
-                <h3 className="font-serif text-xl font-black text-amber-100 flex items-center gap-2">
-                  <Cpu className="w-5 h-5 text-amber-500" /> Sfida l'Intelligenza Artificiale
+                <h3 className="font-serif text-xl font-black text-app-text flex items-center gap-2">
+                  <Cpu className="w-5 h-5 text-app-accent" /> Sfida l'Intelligenza Artificiale
                 </h3>
-                <p className="text-xs text-stone-400 mt-1">
+                <p className="text-xs text-app-text-muted mt-1">
                   Gioca offline contro il motore euristico locale. Ottimo per fare pratica immediata.
                 </p>
               </div>
@@ -107,8 +107,8 @@ export default function LobbyPage() {
                     id={`ai-diff-${diff}`}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all outline-none cursor-pointer ${
                       difficulty === diff
-                        ? 'bg-amber-800 text-amber-100 border border-amber-600/40 shadow-inner'
-                        : 'bg-stone-900 text-stone-400 border border-stone-800'
+                        ? 'bg-app-accent text-app-on-accent border border-app-accent shadow-inner'
+                        : 'bg-app-panel text-app-text-muted border border-app-border'
                     }`}
                     onClick={() => {
                       setDifficulty(diff);
@@ -121,12 +121,12 @@ export default function LobbyPage() {
               </div>
             </div>
 
-            <div className="flex justify-between items-center bg-[#070504]/55 p-4 rounded-xl border border-amber-950/20">
-              <span className="text-xs text-stone-400">Pronto per il match?</span>
+            <div className="flex justify-between items-center bg-app-bg/55 p-4 rounded-xl border border-app-border">
+              <span className="text-xs text-app-text-muted">Pronto per il match?</span>
               <button
                 id="play-vs-ai-btn"
                 onClick={startComputerMatch}
-                className="px-5 py-2.5 bg-gradient-to-r from-amber-700 to-amber-900 hover:from-amber-600 hover:to-amber-800 text-amber-100 font-bold text-xs rounded-lg border border-amber-500/15 shadow-md flex items-center gap-2 transform transition active:scale-95 outline-none cursor-pointer"
+                className="px-5 py-2.5 bg-app-accent hover:bg-app-accent-hover text-app-on-accent font-bold text-xs rounded-lg border border-app-accent shadow-md flex items-center gap-2 transform transition active:scale-95 outline-none cursor-pointer"
               >
                 Avvia Partita Locale <ChevronRight className="w-3.5 h-3.5" />
               </button>
