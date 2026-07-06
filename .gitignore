@@ -1,0 +1,14 @@
+# Dipendenze
+node_modules/
+
+# Build di produzione
+dist/
+
+# Asset del motore Stockfish (WASM), rigenerati ad ogni "npm install"
+# dallo script postinstall (scripts/copy-stockfish-assets.mjs): non vanno
+# committati perche' Vercel reinstalla le dipendenze da zero ad ogni deploy.
+public/stockfish/
+
+# Varie
+.DS_Store
+*.log

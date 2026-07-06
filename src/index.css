@@ -1,7 +1,9 @@
 /**
- * Versione: 1.1.0
- * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
- * Problema Risolto: Introduzione sistema di 3 temi colore accessibili (Scuro Elegante, Chiaro Pergamena, Alto Contrasto) selezionabili da ogni pagina, scacchiera esclusa.
+ * Versione: 1.2.0
+ * Data e Ora Modifica: 06/07/2026 10:20:54 (Ora di Roma)
+ * Problema Risolto: Aggiunta dei token colore per le 5 categorie di
+ * classificazione mossa (Ottima/Buona/Imprecisione/Errore/Blunder) usate dal
+ * report di analisi post-partita con Stockfish.js, per ciascuno dei 3 temi.
  */
 
 @import "tailwindcss";
@@ -28,6 +30,18 @@
   --color-app-danger-text: #FCA5A5;
   --color-app-success-bg: #0A2A12;
   --color-app-success-text: #86EFAC;
+
+  /* Classificazione mosse (report di analisi post-partita Stockfish.js) */
+  --color-app-move-best-bg: #0A2A12;
+  --color-app-move-best-text: #86EFAC;
+  --color-app-move-good-bg: #06272E;
+  --color-app-move-good-text: #67E8F9;
+  --color-app-move-inaccuracy-bg: #2A2107;
+  --color-app-move-inaccuracy-text: #FDE68A;
+  --color-app-move-mistake-bg: #2A1607;
+  --color-app-move-mistake-text: #FDBA74;
+  --color-app-move-blunder-bg: #2A0A0A;
+  --color-app-move-blunder-text: #FCA5A5;
 }
 
 :root[data-theme="pergamena"] {
@@ -43,6 +57,18 @@
   --color-app-danger-text: #8A1220;
   --color-app-success-bg: #E9F7EE;
   --color-app-success-text: #14532D;
+
+  /* Classificazione mosse (report di analisi post-partita Stockfish.js) */
+  --color-app-move-best-bg: #E9F7EE;
+  --color-app-move-best-text: #14532D;
+  --color-app-move-good-bg: #E6F6F8;
+  --color-app-move-good-text: #155E63;
+  --color-app-move-inaccuracy-bg: #FDF3D9;
+  --color-app-move-inaccuracy-text: #7A5B05;
+  --color-app-move-mistake-bg: #FBE7D4;
+  --color-app-move-mistake-text: #8A3B0A;
+  --color-app-move-blunder-bg: #FDECEC;
+  --color-app-move-blunder-text: #8A1220;
 }
 
 :root[data-theme="alto-contrasto"] {
@@ -58,6 +84,18 @@
   --color-app-danger-text: #FF6B6B;
   --color-app-success-bg: #001A05;
   --color-app-success-text: #6BFF8F;
+
+  /* Classificazione mosse (report di analisi post-partita Stockfish.js) */
+  --color-app-move-best-bg: #001A05;
+  --color-app-move-best-text: #6BFF8F;
+  --color-app-move-good-bg: #001A1A;
+  --color-app-move-good-text: #6BFFF3;
+  --color-app-move-inaccuracy-bg: #1A1600;
+  --color-app-move-inaccuracy-text: #FFE066;
+  --color-app-move-mistake-bg: #1A0D00;
+  --color-app-move-mistake-text: #FFA84D;
+  --color-app-move-blunder-bg: #1A0000;
+  --color-app-move-blunder-text: #FF6B6B;
 }
 
 .wood-dark {

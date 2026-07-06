@@ -1,7 +1,9 @@
 /**
- * Versione: 1.3.0
- * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
- * Problema Risolto: Introduzione sistema di 3 temi colore accessibili (Scuro Elegante, Chiaro Pergamena, Alto Contrasto) selezionabili da ogni pagina, scacchiera esclusa.
+ * Versione: 1.4.0
+ * Data e Ora Modifica: 06/07/2026 10:20:54 (Ora di Roma)
+ * Problema Risolto: Introduzione della route /analisi per il report di
+ * analisi post-partita con Stockfish.js, protetta con lo stesso pattern
+ * <ProtectedRoute requireActiveGame> già usato per /game.
  */
 
 import React from 'react';
@@ -15,6 +17,7 @@ import RegisterPage from './pages/RegisterPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import LobbyPage from './pages/LobbyPage';
 import GamePage from './pages/GamePage';
+import GameAnalysisPage from './pages/GameAnalysisPage';
 import AdminPanel from './components/AdminPanel';
 import MusicPlayer from './components/MusicPlayer';
 import ThemeProvider from './theme/ThemeProvider';
@@ -209,6 +212,14 @@ export default function App() {
               element={
                 <ProtectedRoute requireActiveGame>
                   <GamePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/analisi"
+              element={
+                <ProtectedRoute requireActiveGame>
+                  <GameAnalysisPage />
                 </ProtectedRoute>
               }
             />

@@ -1,7 +1,9 @@
 /**
- * Versione: 1.0.0
- * Data e Ora Modifica: 02/07/2026 10:26:03 (Ora di Roma)
- * Problema Risolto: Revisione e inserimento dell'orario di modifica attuale di Roma e versione 1.0.0 in tutti i file.
+ * Versione: 1.1.0
+ * Data e Ora Modifica: 06/07/2026 10:20:54 (Ora di Roma)
+ * Problema Risolto: Aggiunta di buildFenHistory, che rigioca una cronologia
+ * di mosse a partire da INITIAL_FEN per ottenere l'intera sequenza di
+ * posizioni FEN, usata dall'analisi post-partita con Stockfish.js.
  */
 
 import { ChessPiece, ChessColor, ChessMove, Square } from '../types';
@@ -596,6 +598,37 @@ export function executeMove(
     captured,
     soundType: sound,
   };
+}
+
+/**
+ * Rigioca una cronologia di mosse a partire da INITIAL_FEN tramite
+ * `executeMove`, restituendo l'intera sequenza di posizioni FEN attraversate
+ * dalla partita (inclusa quella iniziale).
+ *
+ * La forma scelta è un array di lunghezza `moves.length + 1`, dove
+ * `history[i]` è la posizione PRIMA della mossa `moves[i]` e `history[i + 1]`
+ * è la posizione DOPO di essa. Questo rende immediato accoppiare "posizione
+ * prima" e "posizione dopo" per ogni mossa (es. per calcolare il
+ * centipawn-loss in src/utils/moveClassification.ts) semplicemente
+ * indicizzando con `i` e `i + 1`.
+ */
+export function buildFenHistory(moves: ChessMove[]): string[] {
+  const history: string[] = [INITIAL_FEN];
+  let currentFen = INITIAL_FEN;
+
+  for (const move of moves) {
+    const result = executeMove(currentFen, move.from, move.to, move.promotion);
+    if (!result.success) {
+      // Mossa storica non rieseguibile a partire dal FEN corrente (non
+      // dovrebbe accadere con dati validi): interrompiamo qui, mantenendo
+      // comunque le posizioni valide raccolte finora.
+      break;
+    }
+    currentFen = result.newFen;
+    history.push(currentFen);
+  }
+
+  return history;
 }
 
 /**
