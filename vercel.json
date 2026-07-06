@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/((?!api/|uploads/|assets/).*)",
+      "source": "/((?!api/|uploads/|assets/|stockfish/).*)",
       "destination": "/index.html"
     }
   ]

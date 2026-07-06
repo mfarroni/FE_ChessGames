@@ -1,16 +1,21 @@
 /**
- * Versione: 1.1.0
- * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
- * Problema Risolto: Introduzione sistema di 3 temi colore accessibili (Scuro Elegante, Chiaro Pergamena, Alto Contrasto) selezionabili da ogni pagina, scacchiera esclusa.
+ * Versione: 1.2.0
+ * Data e Ora Modifica: 06/07/2026 10:20:54 (Ora di Roma)
+ * Problema Risolto: Aggiunta del pulsante "Analizza Partita" nel popup di
+ * fine partita, che porta alla nuova route /analisi (report post-partita
+ * con Stockfish.js) senza chiamare quitToLobby, per non azzerare
+ * activeGame prima di arrivare al report.
  */
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSession } from '../session/useSession';
 import ChessBoard from '../components/ChessBoard';
 import Chat from '../components/Chat';
-import { Award } from 'lucide-react';
+import { Award, BarChart3 } from 'lucide-react';
 
 export default function GamePage() {
+  const navigate = useNavigate();
   const {
     player,
     activeGame,
@@ -225,13 +230,24 @@ export default function GamePage() {
               )}
             </div>
 
-            <button
-              id="close-match-outcome-btn"
-              className="px-6 py-3 bg-app-accent hover:bg-app-accent-hover text-app-on-accent rounded-xl font-bold text-xs border border-app-accent shadow-lg cursor-pointer transform transition active:scale-95 outline-none w-full"
-              onClick={quitToLobby}
-            >
-              Ritorna alla Lobby
-            </button>
+            <div className="flex gap-3">
+              <button
+                id="analyze-match-btn"
+                className="flex-1 px-6 py-3 bg-app-accent hover:bg-app-accent-hover text-app-on-accent rounded-xl font-bold text-xs border border-app-accent shadow-lg cursor-pointer transform transition active:scale-95 outline-none flex items-center justify-center gap-2"
+                onClick={() => navigate('/analisi')}
+              >
+                <BarChart3 className="w-4 h-4" />
+                Analizza Partita
+              </button>
+
+              <button
+                id="close-match-outcome-btn"
+                className="flex-1 px-6 py-3 bg-app-panel hover:bg-app-panel/70 text-app-text rounded-xl font-bold text-xs border border-app-border shadow-lg cursor-pointer transform transition active:scale-95 outline-none"
+                onClick={quitToLobby}
+              >
+                Torna alla Lobby
+              </button>
+            </div>
           </div>
         </div>
       )}

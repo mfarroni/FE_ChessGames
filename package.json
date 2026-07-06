@@ -1,15 +1,16 @@
 {
-  "_comment_version": "1.2.0",
-  "_comment_datetime": "04/07/2026 (Ora di Roma)",
-  "_comment_description": "Introduzione sistema di 3 temi colore accessibili (Scuro Elegante, Chiaro Pergamena, Alto Contrasto) selezionabili da ogni pagina, scacchiera esclusa.",
+  "_comment_version": "1.3.0",
+  "_comment_datetime": "06/07/2026 10:20:54 (Ora di Roma)",
+  "_comment_description": "Introduzione dell'analisi post-partita con Stockfish.js (WASM) eseguita interamente lato client: script postinstall che copia la build lite-single del motore in public/stockfish.",
   "name": "chess-frontend",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "node scripts/copy-stockfish-assets.mjs"
   },
   "dependencies": {
     "canvas-confetti": "^1.6.0",
@@ -18,14 +19,15 @@
     "motion": "^11.11.17",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
+    "react-router-dom": "^6.28.0",
+    "stockfish": "^18.0.8"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0-alpha.15",
     "@types/canvas-confetti": "^1.6.4",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.0",
-    "@tailwindcss/vite": "^4.0.0-alpha.15",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
     "tailwindcss": "^4.0.0-alpha.15",
