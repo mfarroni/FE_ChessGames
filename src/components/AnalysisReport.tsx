@@ -1,17 +1,16 @@
 /**
- * Versione: 1.0.0
- * Data e Ora Modifica: 06/07/2026 10:20:54 (Ora di Roma)
- * Problema Risolto: Introduzione del report di analisi post-partita:
- * riepilogo accuratezza per giocatore, grafico di valutazione, elenco mosse
- * classificate e pannello di dettaglio con ri-analisi on-demand a profondità
- * maggiore. L'intera analisi gira nel browser tramite Stockfish.js (WASM):
- * nessuna chiamata al backend. L'analisi NON parte mai automaticamente,
- * solo dietro click esplicito su "Analizza Partita".
+ * Versione: 1.1.0
+ * Data e Ora Modifica: 06/07/2026 17:04:27 (Ora di Roma)
+ * Problema Risolto: Aggiunta della legenda di classificazione mosse
+ * (`AnalysisLegend`) accanto al titolo del report e, nel pannello "Dettaglio
+ * Mossa", di un confronto visivo tra "Mossa Giocata" e "Mossa Suggerita"
+ * tramite due `MiniBoardPreview` affiancate (impilate con toggle sotto il
+ * breakpoint `lg:`).
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ChessGame, ChessMove } from '../types';
-import { buildFenHistory, parseFen } from '../utils/chessLogic';
+import { ChessGame, ChessMove, ChessPiece, Square } from '../types';
+import { buildFenHistory, executeMove, parseFen } from '../utils/chessLogic';
 import {
   buildMoveAnalysis,
   computeAccuracyByColor,
@@ -30,6 +29,8 @@ import {
   PositionAnalysis,
 } from '../engine/stockfishClient';
 import EvaluationChart from './EvaluationChart';
+import AnalysisLegend from './AnalysisLegend';
+import MiniBoardPreview from './MiniBoardPreview';
 import { Cpu, Loader2, TrendingUp, AlertTriangle, RotateCw, X } from 'lucide-react';
 
 interface AnalysisReportProps {
@@ -120,6 +121,38 @@ export default function AnalysisReport({ game }: AnalysisReportProps) {
       ? moveAnalysis.find((e) => e.moveIndex === selectedMoveIndex) || null
       : null;
 
+  // Confronto visivo "Mossa Giocata" / "Mossa Suggerita": ricava dalla mossa
+  // migliore del motore (in notazione UCI, es. "e2e4" o "e7e8q") la casella
+  // di partenza/arrivo e la FEN risultante, rigiocandola con `executeMove` a
+  // partire da `fenBefore`. `null` quando non c'è una mossa suggerita
+  // utilizzabile per questa posizione (nessun bestMoveUci, sentinella
+  // "(none)" del motore, stringa troppo corta, o mossa non eseguibile).
+  const suggestedMovePreview = useMemo(() => {
+    if (!selectedEntry) return null;
+    const { bestMoveUci, fenBefore } = selectedEntry;
+    if (!bestMoveUci || bestMoveUci === '(none)' || bestMoveUci.length < 4) {
+      return null;
+    }
+
+    const from = bestMoveUci.slice(0, 2) as Square;
+    const to = bestMoveUci.slice(2, 4) as Square;
+    const promotion = (bestMoveUci.length > 4 ? bestMoveUci[4] : 'q') as ChessPiece['type'];
+
+    const result = executeMove(fenBefore, from, to, promotion);
+    if (!result.success) return null;
+
+    return { fen: result.newFen, from, to };
+  }, [selectedEntry]);
+
+  // Toggle mobile (sotto `lg:`) tra le due mini-scacchiere di confronto; a
+  // `lg:` e oltre entrambe sono mostrate affiancate e il toggle è nascosto.
+  const [mobileBoardView, setMobileBoardView] = useState<'played' | 'suggested'>('played');
+
+  useEffect(() => {
+    // Riparte sempre da "Mossa Giocata" quando cambia la mossa selezionata.
+    setMobileBoardView('played');
+  }, [selectedMoveIndex]);
+
   const handleSelectMove = (index: number) => {
     setSelectedMoveIndex((prev) => (prev === index ? null : index));
   };
@@ -155,6 +188,46 @@ export default function AnalysisReport({ game }: AnalysisReportProps) {
 
   const isBusy = status === 'loading-engine' || status === 'analyzing';
 
+  // Renderizza una singola "cella" del confronto visivo (etichetta + mini
+  // scacchiera, o il placeholder quando la mossa suggerita non è
+  // disponibile). Riusata sia per la vista impilata mobile (una board alla
+  // volta dietro il toggle) sia per la vista affiancata da `lg:` in su.
+  const renderBoardSlot = (kind: 'played' | 'suggested', entry: MoveAnalysisEntry) => {
+    if (kind === 'played') {
+      return (
+        <div className="flex flex-col items-center gap-1.5">
+          <p className="text-[10px] text-app-text-muted font-mono uppercase tracking-wider">
+            Mossa Giocata
+          </p>
+          <MiniBoardPreview
+            fen={entry.fenAfter}
+            highlightFrom={entry.move.from}
+            highlightTo={entry.move.to}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col items-center gap-1.5">
+        <p className="text-[10px] text-app-text-muted font-mono uppercase tracking-wider">
+          Mossa Suggerita
+        </p>
+        {suggestedMovePreview ? (
+          <MiniBoardPreview
+            fen={suggestedMovePreview.fen}
+            highlightFrom={suggestedMovePreview.from}
+            highlightTo={suggestedMovePreview.to}
+          />
+        ) : (
+          <p className="text-app-text-muted italic text-[10px] text-center px-2 py-6 max-w-[168px]">
+            Mossa suggerita non disponibile per questa posizione
+          </p>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="w-full space-y-6">
       {/* Header: riepilogo accuratezza */}
@@ -167,6 +240,9 @@ export default function AnalysisReport({ game }: AnalysisReportProps) {
             <p className="text-[11px] text-app-text-muted font-mono mt-0.5">
               Motore Stockfish.js (WASM) eseguito interamente nel tuo browser · profondità {ANALYSIS_DEPTH}
             </p>
+            <div className="mt-2">
+              <AnalysisLegend />
+            </div>
           </div>
 
           {!isBusy && (
@@ -315,6 +391,49 @@ export default function AnalysisReport({ game }: AnalysisReportProps) {
                   {selectedEntry.move.notation}
                 </span>
                 <ClassificationBadge entry={selectedEntry} />
+              </div>
+
+              {/* Confronto visivo Mossa Giocata / Mossa Suggerita. Sotto il
+                  breakpoint lg: un segmented-control (stesso pattern di
+                  ThemeSwitcher.tsx) mostra una sola mini-scacchiera alla
+                  volta; da lg: in su entrambe sono affiancate e il toggle è
+                  nascosto. */}
+              <div>
+                <div className="lg:hidden flex items-center gap-1 bg-app-panel px-1.5 py-1.5 rounded-xl border border-app-border w-fit mb-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setMobileBoardView('played')}
+                    aria-pressed={mobileBoardView === 'played'}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold outline-none transition-all duration-150 cursor-pointer border ${
+                      mobileBoardView === 'played'
+                        ? 'bg-app-accent border-app-accent text-app-on-accent shadow-[0_0_8px_rgba(146,64,14,0.35)]'
+                        : 'bg-transparent border-transparent text-app-text-muted hover:text-app-text hover:border-app-border'
+                    }`}
+                  >
+                    Mossa Giocata
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMobileBoardView('suggested')}
+                    aria-pressed={mobileBoardView === 'suggested'}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold outline-none transition-all duration-150 cursor-pointer border ${
+                      mobileBoardView === 'suggested'
+                        ? 'bg-app-accent border-app-accent text-app-on-accent shadow-[0_0_8px_rgba(146,64,14,0.35)]'
+                        : 'bg-transparent border-transparent text-app-text-muted hover:text-app-text hover:border-app-border'
+                    }`}
+                  >
+                    Mossa Suggerita
+                  </button>
+                </div>
+
+                <div className="lg:hidden flex justify-center">
+                  {renderBoardSlot(mobileBoardView, selectedEntry)}
+                </div>
+
+                <div className="hidden lg:flex lg:gap-4 lg:justify-center">
+                  {renderBoardSlot('played', selectedEntry)}
+                  {renderBoardSlot('suggested', selectedEntry)}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
