@@ -23,19 +23,3 @@ export const getWebSocketUrl = (): string => {
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   return `${protocol}//${window.location.host}`;
 };
-
-/**
- * Normalizes any resource path (e.g. uploaded tracks under /uploads)
- * by prepending the Backend API base URL if it's a relative path.
- */
-export const getResourceUrl = (url: string): string => {
-  if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
-    return url;
-  }
-  // If relative path and API_BASE_URL is configured, prepend it
-  if (url.startsWith('/') && API_BASE_URL) {
-    return `${API_BASE_URL.replace(/\/$/, '')}${url}`;
-  }
-  return url;
-};

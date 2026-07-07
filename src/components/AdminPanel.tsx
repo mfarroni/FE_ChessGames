@@ -1,21 +1,19 @@
 /**
- * Versione: 2.1.0
- * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
- * Problema Risolto: Introduzione sistema di 3 temi colore accessibili (Scuro Elegante, Chiaro Pergamena, Alto Contrasto) selezionabili da ogni pagina, scacchiera esclusa.
+ * Versione: 2.2.0
+ * Data e Ora Modifica: 07/07/2026 12:45:00 (Ora di Roma)
+ * Problema Risolto: Rimozione completa della funzionalità musica d'atmosfera (upload/gestione tracce MP3) dal pannello admin.
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Lock, 
   Database, 
-  Music, 
   Trash2, 
   Plus, 
   LogOut, 
   CheckCircle2, 
   AlertCircle, 
   ArrowLeft, 
-  Upload, 
   RefreshCw,
   HelpCircle,
   Users,
@@ -26,7 +24,7 @@ import {
   Mail,
   Key
 } from 'lucide-react';
-import { API_BASE_URL, getResourceUrl } from '../utils/apiConfig';
+import { API_BASE_URL } from '../utils/apiConfig';
 
 // Module-scope fetch wrapper to automatically prepend API_BASE_URL for API requests
 const fetch = (input: RequestInfo | URL, init?: RequestInit) => {
@@ -36,13 +34,6 @@ const fetch = (input: RequestInfo | URL, init?: RequestInit) => {
   }
   return window.fetch(url, init);
 };
-
-interface MusicTrack {
-  id: string;
-  name: string;
-  url: string;
-  isLocal?: boolean;
-}
 
 export default function AdminPanel() {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(false);
@@ -74,17 +65,6 @@ export default function AdminPanel() {
   const [brevoConfigError, setBrevoConfigError] = useState<string | null>(null);
   const [brevoConfigSuccess, setBrevoConfigSuccess] = useState<string | null>(null);
   const [savingBrevo, setSavingBrevo] = useState<boolean>(false);
-
-  // Tracks list
-  const [tracks, setTracks] = useState<MusicTrack[]>([]);
-  const [loadingTracks, setLoadingTracks] = useState<boolean>(false);
-
-  // File upload states
-  const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
-  const [dragActive, setDragActive] = useState<boolean>(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Users management states
   const [users, setUsers] = useState<any[]>([]);
@@ -133,7 +113,6 @@ export default function AdminPanel() {
       setAdminUsername(storedUser);
       fetchDbStatus(storedToken);
       fetchBrevoConfig(storedToken);
-      fetchTracks();
     }
   }, []);
 
@@ -442,21 +421,6 @@ export default function AdminPanel() {
     }
   };
 
-  const fetchTracks = async () => {
-    setLoadingTracks(true);
-    try {
-      const res = await fetch('/api/music');
-      const data = await res.json();
-      if (data.success && data.tracks) {
-        setTracks(data.tracks);
-      }
-    } catch (err) {
-      console.error('Errore nel caricamento delle musiche:', err);
-    } finally {
-      setLoadingTracks(false);
-    }
-  };
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError(null);
@@ -482,7 +446,6 @@ export default function AdminPanel() {
         sessionStorage.setItem('admin_username', data.username);
         fetchDbStatus(data.token);
         fetchBrevoConfig(data.token);
-        fetchTracks();
       } else {
         setLoginError(data.message || 'Credenziali non valide.');
       }
@@ -521,7 +484,6 @@ export default function AdminPanel() {
         if (adminToken) {
           fetchDbStatus(adminToken);
         }
-        fetchTracks(); // Refetch tracks from PostgreSQL!
       } else {
         setDbConfigError(data.message || 'Errore di configurazione.');
       }
@@ -530,124 +492,6 @@ export default function AdminPanel() {
     } finally {
       setTestingConnection(false);
     }
-  };
-
-  // Drag-and-drop & File uploads handlers
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = async (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0];
-      await uploadFile(file);
-    }
-  };
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      await uploadFile(file);
-    }
-  };
-
-  const uploadFile = async (file: File) => {
-    if (tracks.length >= 5) {
-      setUploadError('Limite massimo di 5 tracce raggiunto. Elimina un brano prima di caricarne uno nuovo.');
-      setUploadSuccess(null);
-      return;
-    }
-
-    if (!file.name.toLowerCase().endsWith('.mp3')) {
-      setUploadError('Puoi caricare solo file in formato .mp3');
-      setUploadSuccess(null);
-      return;
-    }
-
-    if (file.size > 25 * 1024 * 1024) {
-      setUploadError('Il file è troppo grande. Il limite massimo è di 25 MB.');
-      setUploadSuccess(null);
-      return;
-    }
-
-    setIsUploading(true);
-    setUploadError(null);
-    setUploadSuccess(null);
-
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const base64 = event.target?.result as string;
-      if (!base64) {
-        setUploadError('Errore durante la lettura del file.');
-        setIsUploading(false);
-        return;
-      }
-
-      try {
-        const res = await fetch('/api/music/upload', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'x-admin-token': adminToken || ''
-          },
-          body: JSON.stringify({ name: file.name, base64 })
-        });
-        const data = await res.json();
-
-        if (res.ok && data.success) {
-          setUploadSuccess(`"${data.track.name}" caricato con successo!`);
-          fetchTracks();
-        } else {
-          setUploadError(data.message || 'Errore nel caricamento del file.');
-        }
-      } catch (err) {
-        setUploadError('Errore di connessione al server.');
-      } finally {
-        setIsUploading(false);
-      }
-    };
-
-    reader.onerror = () => {
-      setUploadError('Errore durante la lettura del file.');
-      setIsUploading(false);
-    };
-
-    reader.readAsDataURL(file);
-  };
-
-  const handleDeleteTrack = async (trackId: string, trackName: string) => {
-    if (!confirm(`Sei sicuro di voler eliminare la traccia d'atmosfera "${trackName}"?`)) return;
-
-    try {
-      const res = await fetch(`/api/music/${trackId}`, {
-        method: 'DELETE',
-        headers: { 'x-admin-token': adminToken || '' }
-      });
-      const data = await res.json();
-
-      if (res.ok && data.success) {
-        setUploadSuccess('Traccia d\'atmosfera eliminata con successo.');
-        fetchTracks();
-      } else {
-        alert(data.message || 'Errore durante l\'eliminazione della traccia.');
-      }
-    } catch (err) {
-      alert('Errore di rete durante l\'eliminazione.');
-    }
-  };
-
-  const handleButtonClick = () => {
-    fileInputRef.current?.click();
   };
 
   return (
@@ -687,7 +531,7 @@ export default function AdminPanel() {
             </div>
             <h2 className="font-serif text-xl font-black text-app-text">Accesso Amministrazione</h2>
             <p className="text-app-text-muted text-xs mt-1">
-              Inserisci le credenziali di amministratore per gestire il database e caricare i brani MP3.
+              Inserisci le credenziali di amministratore per gestire il database e la configurazione email.
             </p>
           </div>
 
@@ -741,14 +585,14 @@ export default function AdminPanel() {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_right,rgba(217,119,6,0.04)_0%,transparent_60%)] pointer-events-none" />
             <h1 className="font-serif text-2xl font-black text-app-text">Pannello dell'Amministratore</h1>
             <p className="text-xs text-app-text-muted mt-1">
-              Benvenuto, <strong className="text-app-accent font-bold">{adminUsername}</strong>. Da qui puoi connettere il database PostgreSQL di Render ed effettuare l'upload di file MP3 di atmosfera.
+              Benvenuto, <strong className="text-app-accent font-bold">{adminUsername}</strong>. Da qui puoi connettere il database PostgreSQL di Render e configurare l'invio delle email.
             </p>
           </div>
 
           {/* TWO COLUMNS LAYOUT */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            {/* Column 1: DB Configuration & Uploads */}
+            {/* Column 1: Configurazione Database & Email */}
             <div className="lg:col-span-7 space-y-8">
               
               {/* PostgreSQL Config Card */}
@@ -857,7 +701,6 @@ export default function AdminPanel() {
                             if (res.ok && data.success) {
                               setDbConfigSuccess(data.message);
                               if (adminToken) fetchDbStatus(adminToken);
-                              fetchTracks();
                             }
                           } catch (e) {
                             setDbConfigError('Impossibile scollegare il database.');
@@ -965,127 +808,6 @@ export default function AdminPanel() {
                     Salva Configurazione Brevo
                   </button>
                 </form>
-              </div>
-
-              {/* Upload MP3 Section */}
-              <div className="glass-panel border border-app-border p-6 rounded-3xl shadow-xl">
-                <div className="flex items-center gap-2 border-b border-app-border pb-3 mb-4 justify-between">
-                  <div className="flex items-center gap-2">
-                    <Music className="w-5 h-5 text-app-accent" />
-                    <h3 className="font-serif text-base font-bold text-app-text">Carica Brani MP3</h3>
-                  </div>
-                  <span className="text-xs font-mono bg-app-panel px-2.5 py-1 rounded-full border border-app-border text-app-accent">
-                    {tracks.length}/5 tracce
-                  </span>
-                </div>
-
-                <p className="text-app-text-muted text-xs mb-4 leading-relaxed">
-                  Carica un file audio in formato <strong className="text-app-accent">.mp3</strong> per la musica di sottofondo d'atmosfera. Puoi caricare file di durata variabile. Limite massimo: 25 MB.
-                </p>
-
-                {/* Drag & Drop Canvas */}
-                <div
-                  onDragEnter={handleDrag}
-                  onDragOver={handleDrag}
-                  onDragLeave={handleDrag}
-                  onDrop={handleDrop}
-                  onClick={handleButtonClick}
-                  className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer select-none flex flex-col items-center justify-center gap-2.5 ${
-                    dragActive
-                      ? 'border-app-accent bg-app-accent/10 shadow-[0_0_15px_rgba(217,119,6,0.1)]'
-                      : 'border-app-border hover:border-app-accent/30 bg-app-bg/10 hover:bg-app-bg/20'
-                  }`}
-                >
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    accept="audio/mp3,audio/mpeg"
-                    className="hidden"
-                  />
-                  <div className="w-12 h-12 rounded-xl bg-app-accent/20 border border-app-accent/15 flex items-center justify-center text-app-accent">
-                    {isUploading ? <RefreshCw className="w-6 h-6 animate-spin" /> : <Upload className="w-6 h-6" />}
-                  </div>
-                  <div>
-                    <p className="text-xs text-app-text font-semibold">
-                      {isUploading ? 'Lettura ed elaborazione file in corso...' : 'Trascina qui il file .mp3 o clicca per sfogliare'}
-                    </p>
-                    <p className="text-[10px] text-app-text-muted mt-1">Formati supportati: MPEG-3 (.mp3)</p>
-                  </div>
-                </div>
-
-                {uploadError && (
-                  <div className="bg-app-danger-bg border border-app-danger-text/30 rounded-xl p-3 text-app-danger-text text-xs text-center font-medium mt-4">
-                    {uploadError}
-                  </div>
-                )}
-
-                {uploadSuccess && (
-                  <div className="bg-app-success-bg border border-app-success-text/30 rounded-xl p-3 text-app-success-text text-xs text-center font-medium mt-4 flex items-center justify-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-app-success-text shrink-0" />
-                    <span>{uploadSuccess}</span>
-                  </div>
-                )}
-              </div>
-
-            </div>
-
-            {/* Column 2: Track list */}
-            <div className="lg:col-span-5">
-              <div className="glass-panel border border-app-border p-6 rounded-3xl shadow-xl">
-                <div className="flex items-center justify-between border-b border-app-border pb-3 mb-4">
-                  <h3 className="font-serif text-base font-bold text-app-text">Tracce Atmosfera Caricate</h3>
-                  <button 
-                    onClick={fetchTracks}
-                    title="Aggiorna lista"
-                    className="p-1 text-app-text-muted hover:text-app-accent transition-colors"
-                  >
-                    <RefreshCw className={`w-4 h-4 ${loadingTracks ? 'animate-spin' : ''}`} />
-                  </button>
-                </div>
-
-                {loadingTracks ? (
-                  <div className="py-12 text-center text-xs text-app-text-muted font-mono animate-pulse">
-                    Caricamento brani...
-                  </div>
-                ) : tracks.length === 0 ? (
-                  <div className="py-12 text-center rounded-2xl border border-app-border bg-app-bg/10">
-                    <Music className="w-8 h-8 text-app-text-muted mx-auto mb-2.5" />
-                    <p className="text-xs text-app-text-muted">Nessuna traccia d'atmosfera caricata.</p>
-                    <p className="text-[10px] text-app-text-muted mt-1">Carica un file MP3 per cominciare.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {tracks.map((track) => (
-                      <div 
-                        key={track.id} 
-                        className="flex items-center justify-between p-3 rounded-xl border border-app-border bg-app-bg/25 hover:bg-app-bg/45 hover:border-app-border transition-all"
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
-                          <div className="w-8 h-8 rounded bg-app-accent/20 border border-app-accent/10 flex items-center justify-center text-app-accent font-serif font-semibold shrink-0">
-                            ♬
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-xs text-app-text font-semibold truncate" title={track.name}>
-                              {track.name}
-                            </p>
-                            <p className="text-[9px] text-app-text-muted font-mono truncate" title={track.url}>
-                              {track.url.startsWith('/uploads/') ? 'File Caricato' : 'Link Remoto'}
-                            </p>
-                          </div>
-                        </div>
-
-                        <button
-                          onClick={() => handleDeleteTrack(track.id, track.name)}
-                          className="p-2 bg-app-danger-bg hover:opacity-80 text-app-danger-text rounded-lg border border-app-danger-text/30 transition-all cursor-pointer"
-                          title="Elimina traccia d'atmosfera"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
 
