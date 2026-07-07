@@ -16,6 +16,7 @@ import {
   Smartphone,
   Gamepad2
 } from 'lucide-react';
+import SupportButton from '../components/SupportButton';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -213,6 +214,8 @@ export default function HomePage() {
         <div className="text-center text-[10px] font-mono text-app-text-muted select-none">
           Licenza App Store Gratuita • Circolo degli Scacchi d'Elite v2.0 • Protetto da CAPTCHA
         </div>
+
+        <SupportButton message="Ti piace sfidare la classifica e l'IA? Se ti stai divertendo, offrimi un caffè per tenere in vita l'arena ☕" />
       </div>
     </div>
   );

@@ -12,6 +12,7 @@
 import React from 'react';
 import { useSession } from '../session/useSession';
 import AnalysisReport from '../components/AnalysisReport';
+import SupportButton from '../components/SupportButton';
 
 export default function GameAnalysisPage() {
   const { activeGame } = useSession();
@@ -21,6 +22,8 @@ export default function GameAnalysisPage() {
   return (
     <div id="game-analysis-screen" className="w-full duration-500 animate-fade-in">
       <AnalysisReport game={activeGame} />
+
+      <SupportButton message="Questa analisi ti ha aiutato a capire i tuoi errori? Offrimi un caffè per continuare a migliorare lo strumento ☕" />
     </div>
   );
 }
