@@ -1,14 +1,26 @@
 /**
- * Versione: 1.1.0
- * Data e Ora Modifica: 06/07/2026 10:20:54 (Ora di Roma)
- * Problema Risolto: Aggiunta di buildFenHistory, che rigioca una cronologia
- * di mosse a partire da INITIAL_FEN per ottenere l'intera sequenza di
- * posizioni FEN, usata dall'analisi post-partita con Stockfish.js.
+ * Versione: 1.2.0
+ * Data e Ora Modifica: 07/07/2026 09:45:00 (Ora di Roma)
+ * Problema Risolto: La notazione delle mosse usa ora le iniziali italiane dei
+ * pezzi (Re, Donna, Torre, Alfiere, Cavallo) invece di quelle inglesi, così la
+ * cronologia mosse e il report di analisi mostrano la notazione algebrica italiana.
  */
 
 import { ChessPiece, ChessColor, ChessMove, Square } from '../types';
 
 export const INITIAL_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+// Iniziali dei pezzi nella notazione algebrica italiana.
+// Il pedone non ha lettera. Nota: il Re è 'R' (Re) e la Torre è 'T' (Torre),
+// diversamente dalla notazione inglese dove 'R' indica il rook (torre).
+export const ITALIAN_PIECE_LETTERS: Record<ChessPiece['type'], string> = {
+  k: 'R', // Re
+  q: 'D', // Donna
+  r: 'T', // Torre
+  b: 'A', // Alfiere
+  n: 'C', // Cavallo
+  p: '',  // Pedone (senza lettera)
+};
 
 export function squareToCoords(sq: Square) {
   const col = sq.charCodeAt(0) - 97; // 'a' -> 0
@@ -475,7 +487,7 @@ export function executeMove(
       notation = to;
     }
   } else {
-    const pieceLetter = piece.type.toUpperCase();
+    const pieceLetter = ITALIAN_PIECE_LETTERS[piece.type];
     notation = `${pieceLetter}${isCapture ? 'x' : ''}${to}`;
   }
 
@@ -485,7 +497,7 @@ export function executeMove(
   // Handle pawn promotion
   if (piece.type === 'p' && (toCoords.r === 0 || toCoords.r === 7)) {
     board[toCoords.r][toCoords.c] = { type: promotionType, color: turn };
-    notation += `=${promotionType.toUpperCase()}`;
+    notation += `=${ITALIAN_PIECE_LETTERS[promotionType]}`;
   } else {
     board[toCoords.r][toCoords.c] = piece;
   }
