@@ -19,7 +19,6 @@ import LobbyPage from './pages/LobbyPage';
 import GamePage from './pages/GamePage';
 import GameAnalysisPage from './pages/GameAnalysisPage';
 import AdminPanel from './components/AdminPanel';
-import MusicPlayer from './components/MusicPlayer';
 import ThemeProvider from './theme/ThemeProvider';
 import ThemeSwitcher from './components/ThemeSwitcher';
 import { Volume2, VolumeX, ShieldCheck } from 'lucide-react';
@@ -61,8 +60,6 @@ function AppLayout() {
         {/* Dynamic header indicators */}
         <div className="flex items-center gap-4">
           <ThemeSwitcher />
-
-          <MusicPlayer />
 
           <button
             id="ambient-acoustics-toggle"
