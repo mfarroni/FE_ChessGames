@@ -124,12 +124,12 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const socketUrl = getWebSocketUrl();
 
-    console.log('[ChessClient] Establishing WebSocket to:', socketUrl);
+    if (import.meta.env.DEV) console.log('[ChessClient] Establishing WebSocket to:', socketUrl);
     setConnectionStatus('connecting');
     const socket = new WebSocket(socketUrl);
 
     socket.onopen = () => {
-      console.log('[ChessClient] WebSocket connected successfully.');
+      if (import.meta.env.DEV) console.log('[ChessClient] WebSocket connected successfully.');
       setConnectionStatus('connected');
 
       // Re-register if previously confirmed in this session
