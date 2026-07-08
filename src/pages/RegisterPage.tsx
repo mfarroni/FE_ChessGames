@@ -91,11 +91,6 @@ export default function RegisterPage() {
               />
             </div>
 
-            {/* Sandbox Hint for easy testing! */}
-            <div className="bg-app-accent/10 border border-app-accent/30 rounded-xl p-3 text-app-text-muted text-[11px] leading-relaxed">
-              <strong className="text-app-accent font-serif">Nota per il Collaudo:</strong> Dal momento che ti trovi in un ambiente di anteprima sandbox, se non hai configurato le variabili SMTP nel file `.env`, il codice è stato memorizzato in sicurezza e stampato nei <strong className="text-app-accent">Log di Sistema (Admin Panel / System Logs)</strong>. Copialo da lì per completare il test!
-            </div>
-
             <button
               type="submit"
               className="w-full py-3.5 bg-app-accent hover:bg-app-accent-hover text-app-on-accent rounded-xl font-bold text-xs uppercase tracking-wider shadow-lg cursor-pointer transform transition active:scale-95 outline-none flex items-center justify-center gap-2"
