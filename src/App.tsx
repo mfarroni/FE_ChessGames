@@ -49,13 +49,13 @@ function AppLayout() {
 
       {/* Elegant Header */}
       <header className="h-16 flex items-center justify-between px-8 bg-app-panel border-b border-app-border z-40 relative select-none">
-        <div className="flex items-center gap-4">
+        <Link to="/" className="flex items-center gap-4 cursor-pointer no-underline transition-opacity hover:opacity-80">
           <div className="w-10 h-10 bg-app-accent rounded flex items-center justify-center text-xl font-serif text-app-on-accent">♚</div>
           <div>
             <h1 className="text-lg font-bold tracking-widest text-app-text uppercase">Grandmaster Live</h1>
             <p className="text-[10px] text-app-text-muted font-mono tracking-wider">In Tempo Reale • Audio Procedurale • Illuminazione Tridimensionale</p>
           </div>
-        </div>
+        </Link>
 
         {/* Dynamic header indicators */}
         <div className="flex items-center gap-4">
@@ -153,13 +153,13 @@ function AdminRoute() {
       {/* Simple Header for Admin (duplicato intenzionalmente rispetto a AppLayout: /admin
           non condivide la sessione giocatore, quindi ha il proprio ThemeSwitcher) */}
       <header className="h-16 flex items-center justify-between px-8 bg-app-panel border-b border-app-border z-40 relative select-none">
-        <div className="flex items-center gap-4">
+        <Link to="/" className="flex items-center gap-4 cursor-pointer no-underline transition-opacity hover:opacity-80">
           <div className="w-10 h-10 bg-app-accent rounded flex items-center justify-center text-xl font-serif text-app-on-accent">♚</div>
           <div>
             <h1 className="text-lg font-bold tracking-widest text-app-text uppercase">Grandmaster Live</h1>
             <p className="text-[10px] text-app-text-muted font-mono tracking-wider">Area Riservata Amministrazione</p>
           </div>
-        </div>
+        </Link>
         <ThemeSwitcher />
       </header>
 
