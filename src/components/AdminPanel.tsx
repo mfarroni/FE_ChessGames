@@ -1,7 +1,7 @@
 /**
- * Versione: 2.2.0
- * Data e Ora Modifica: 07/07/2026 12:45:00 (Ora di Roma)
- * Problema Risolto: Rimozione completa della funzionalità musica d'atmosfera (upload/gestione tracce MP3) dal pannello admin.
+ * Versione: 2.3.0
+ * Data e Ora Modifica: 09/07/2026 11:00:00 (Ora di Roma)
+ * Problema Risolto: Aggiunta la sezione "Osservazioni Giocatori" nel pannello admin (lista feedback da GET /api/admin/feedback con modale di dettaglio).
  */
 
 import React, { useState, useEffect } from 'react';
@@ -22,7 +22,9 @@ import {
   Terminal,
   UserPlus,
   Mail,
-  Key
+  Key,
+  MessageSquare,
+  X
 } from 'lucide-react';
 import { API_BASE_URL } from '../utils/apiConfig';
 
@@ -34,6 +36,14 @@ const fetch = (input: RequestInfo | URL, init?: RequestInit) => {
   }
   return window.fetch(url, init);
 };
+
+interface FeedbackItem {
+  id: string;
+  playerName: string;
+  title: string;
+  message: string;
+  createdAt?: string;
+}
 
 export default function AdminPanel() {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(false);
@@ -69,6 +79,11 @@ export default function AdminPanel() {
   // Users management states
   const [users, setUsers] = useState<any[]>([]);
   const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
+
+  // Player feedback states
+  const [feedback, setFeedback] = useState<FeedbackItem[]>([]);
+  const [loadingFeedback, setLoadingFeedback] = useState<boolean>(false);
+  const [selectedFeedback, setSelectedFeedback] = useState<FeedbackItem | null>(null);
   
   // User Modal states
   const [showUserModal, setShowUserModal] = useState<boolean>(false);
@@ -121,6 +136,7 @@ export default function AdminPanel() {
     if (isAdminLoggedIn && adminToken) {
       fetchUsers();
       fetchLogs();
+      fetchFeedback();
       const interval = setInterval(() => {
         fetchLogs();
       }, 4000); // refresh system logs every 4 seconds
@@ -143,6 +159,24 @@ export default function AdminPanel() {
       console.error('Errore nel caricamento degli utenti:', err);
     } finally {
       setLoadingUsers(false);
+    }
+  };
+
+  const fetchFeedback = async () => {
+    if (!adminToken) return;
+    setLoadingFeedback(true);
+    try {
+      const res = await fetch('/api/admin/feedback', {
+        headers: { 'x-admin-token': adminToken }
+      });
+      const data = await res.json();
+      if (data.success && data.feedback) {
+        setFeedback(data.feedback);
+      }
+    } catch (err) {
+      console.error('Errore nel caricamento dei feedback:', err);
+    } finally {
+      setLoadingFeedback(false);
     }
   };
 
@@ -1200,6 +1234,55 @@ export default function AdminPanel() {
             </div>
           </div>
 
+          {/* PLAYER FEEDBACK / OSSERVAZIONI GIOCATORI PANEL */}
+          <div className="glass-panel border border-app-border p-6 rounded-3xl shadow-xl space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-app-border pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-app-accent/20 border border-app-accent/15 flex items-center justify-center text-app-accent">
+                  <MessageSquare className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-serif text-base font-bold text-app-text">Osservazioni Giocatori</h3>
+                  <p className="text-[10px] text-app-text-muted">Feedback e suggerimenti inviati dai giocatori.</p>
+                </div>
+              </div>
+              <button
+                onClick={fetchFeedback}
+                className="px-3.5 py-1.5 bg-app-panel hover:bg-app-panel/70 text-app-text text-xs font-bold rounded-xl border border-app-border transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <RefreshCw className={`w-4 h-4 ${loadingFeedback ? 'animate-spin' : ''}`} />
+                Aggiorna
+              </button>
+            </div>
+
+            {loadingFeedback ? (
+              <div className="text-center py-8 text-app-text-muted text-xs">Caricamento osservazioni...</div>
+            ) : feedback.length === 0 ? (
+              <div className="text-center py-8">
+                <MessageSquare className="w-8 h-8 text-app-text-muted mx-auto mb-2.5" />
+                <p className="text-xs text-app-text-muted">Nessun feedback ricevuto.</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {feedback.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setSelectedFeedback(item)}
+                    className="w-full text-left bg-app-bg border border-app-border rounded-xl p-3.5 hover:border-app-accent/50 hover:bg-app-accent/5 transition-all cursor-pointer"
+                  >
+                    <div className="flex items-center justify-between gap-3 mb-1">
+                      <span className="font-bold text-sm text-app-text truncate">{item.title}</span>
+                      <span className="text-[10px] font-mono text-app-accent shrink-0">{item.playerName}</span>
+                    </div>
+                    <p className="text-xs text-app-text-muted leading-relaxed">
+                      {item.message.length > 80 ? item.message.slice(0, 80) + '…' : item.message}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
         </div>
       )}
 
@@ -1401,6 +1484,47 @@ export default function AdminPanel() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DETTAGLIO FEEDBACK / OSSERVAZIONE */}
+      {selectedFeedback && (
+        <div className="fixed inset-0 bg-app-bg/85 backdrop-blur-sm flex items-center justify-center z-50 p-4 select-none animate-fade-in">
+          <div className="bg-app-bg border-2 border-app-border p-6 max-w-lg w-full rounded-2xl shadow-2xl relative overflow-hidden">
+            <div className="flex items-start justify-between gap-3 border-b border-app-border pb-3 mb-4">
+              <h3 className="font-serif text-lg font-bold text-app-text flex items-center gap-2 min-w-0">
+                <MessageSquare className="w-5 h-5 text-app-accent shrink-0" />
+                <span className="truncate">{selectedFeedback.title}</span>
+              </h3>
+              <button
+                onClick={() => setSelectedFeedback(null)}
+                className="text-app-text-muted hover:text-app-text transition-colors cursor-pointer shrink-0"
+                title="Chiudi"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-app-text-muted mb-4 font-mono">
+              <span>Da: <strong className="text-app-accent">{selectedFeedback.playerName}</strong></span>
+              {selectedFeedback.createdAt && (
+                <span>{new Date(selectedFeedback.createdAt).toLocaleString('it-IT')}</span>
+              )}
+            </div>
+
+            <div className="bg-app-bg border border-app-border rounded-xl p-4 max-h-[50vh] overflow-y-auto">
+              <p className="text-sm text-app-text whitespace-pre-wrap break-words leading-relaxed">{selectedFeedback.message}</p>
+            </div>
+
+            <div className="flex justify-end pt-4">
+              <button
+                onClick={() => setSelectedFeedback(null)}
+                className="px-5 py-2 bg-app-panel hover:bg-app-panel/70 text-app-text rounded-xl border border-app-border text-xs font-bold transition-all cursor-pointer"
+              >
+                Chiudi
+              </button>
+            </div>
           </div>
         </div>
       )}
