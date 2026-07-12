@@ -1,16 +1,17 @@
 {
-  "_comment_version": "1.3.0",
-  "_comment_datetime": "06/07/2026 10:20:54 (Ora di Roma)",
-  "_comment_description": "Introduzione dell'analisi post-partita con Stockfish.js (WASM) eseguita interamente lato client: script postinstall che copia la build lite-single del motore in public/stockfish.",
+  "_comment_version": "1.4.0",
+  "_comment_datetime": "12/07/2026 (Ora di Roma)",
+  "_comment_description": "Trasformazione in PWA installabile: manifest, icone (generate via sharp), e service worker con vite-plugin-pwa (autoUpdate; precache dei soli asset statici, Stockfish escluso e gestito CacheFirst al primo uso).",
   "name": "chess-frontend",
   "private": true,
-  "version": "1.3.0",
+  "version": "1.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "postinstall": "node scripts/copy-stockfish-assets.mjs"
+    "postinstall": "node scripts/copy-stockfish-assets.mjs",
+    "generate-icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "canvas-confetti": "^1.6.0",
@@ -32,6 +33,8 @@
     "postcss": "^8.4.38",
     "tailwindcss": "^4.0.0-alpha.15",
     "typescript": "^5.2.2",
-    "vite": "^5.2.11"
+    "vite": "^5.2.11",
+    "vite-plugin-pwa": "^0.20.5",
+    "sharp": "^0.33.5"
   }
 }
