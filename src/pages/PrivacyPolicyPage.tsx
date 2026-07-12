@@ -1,12 +1,12 @@
 /**
- * Versione: 1.1.0
- * Data e Ora Modifica: 04/07/2026 (Ora di Roma)
- * Problema Risolto: Introduzione sistema di 3 temi colore accessibili (Scuro Elegante, Chiaro Pergamena, Alto Contrasto) selezionabili da ogni pagina, scacchiera esclusa. Il banner "BOZZA PLACEHOLDER" resta a colori fissi giallo/nero per restare riconoscibile come avviso editoriale in tutti i temi.
+ * Versione: 1.2.0
+ * Data e Ora Modifica: 12/07/2026 (Ora di Roma)
+ * Problema Risolto: Inserimento del testo definitivo dell'informativa sul trattamento dei dati personali e rimozione del banner di avviso "BOZZA PLACEHOLDER".
  */
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ShieldCheck } from 'lucide-react';
 import { PRIVACY_POLICY_VERSION } from '../constants/privacy';
 
 export default function PrivacyPolicyPage() {
@@ -15,14 +15,6 @@ export default function PrivacyPolicyPage() {
   return (
     <div className="w-full flex flex-col items-center justify-center animate-fade-in duration-500">
       <div className="w-full max-w-3xl space-y-6">
-
-        {/* Draft placeholder warning banner */}
-        <div className="w-full bg-amber-400 border border-amber-600 rounded-2xl p-4 flex items-start gap-3 shadow-lg">
-          <AlertTriangle className="w-6 h-6 text-stone-900 flex-shrink-0 mt-0.5" />
-          <p className="text-stone-900 text-xs sm:text-sm font-bold leading-relaxed">
-            BOZZA PLACEHOLDER — Questo testo NON è definitivo. È in attesa del testo ufficiale fornito dal titolare del trattamento. Non usare in produzione senza sostituirlo.
-          </p>
-        </div>
 
         <div
           id="privacy-policy-panel"
@@ -51,13 +43,25 @@ export default function PrivacyPolicyPage() {
 
           <div className="space-y-4 text-app-text-muted text-xs sm:text-sm leading-relaxed font-sans">
             <p>
-              <strong className="text-app-accent">Bozza in redazione.</strong> Il presente testo è un segnaposto generico e non rappresenta ancora l'informativa ufficiale. Il <strong className="text-app-accent">titolare del trattamento</strong> dei dati personali raccolti da questa piattaforma è attualmente da definire e sarà indicato con i relativi dati di contatto non appena disponibile.
+              <strong className="text-app-accent">Titolare del trattamento</strong> Il titolare del trattamento dei dati personali raccolti tramite GranMasterChess (granmasterchess.it) è il gestore della piattaforma, contattabile all'indirizzo email: postmasterchess@proton.me
             </p>
             <p>
-              <strong className="text-app-accent">Finalità del trattamento (bozza).</strong> I dati personali forniti in fase di registrazione (a titolo esemplificativo: username, indirizzo email, password) sono raccolti al solo fine di consentire la creazione e la gestione dell'account, l'autenticazione dell'utente e l'erogazione dei servizi di gioco offerti dalla piattaforma. Le finalità definitive, le basi giuridiche e i tempi di conservazione saranno specificati nel testo ufficiale.
+              <strong className="text-app-accent">Dati raccolti</strong> In fase di registrazione: username, indirizzo email, password (salvata in forma protetta). Durante l'utilizzo del servizio: statistiche di gioco (punteggio Elo, vittorie, sconfitte), cronologia delle partite. Se utilizzato: osservazioni/feedback volontariamente inviati tramite l'apposito modulo. Dati tecnici di sicurezza (log di accesso e di sistema) per la prevenzione di usi fraudolenti. Tutti i dati raccolti sono strettamente necessari al funzionamento del gioco (creazione dell'account, autenticazione, partecipazione alle partite e alla classifica) e non vengono raccolti dati ulteriori rispetto a quanto indispensabile per questo scopo.
             </p>
             <p>
-              <strong className="text-app-accent">Diritti dell'interessato (bozza).</strong> Ai sensi degli articoli 15-22 del Regolamento (UE) 2016/679 (GDPR), l'interessato avrà diritto di accesso, rettifica, cancellazione, limitazione del trattamento, portabilità dei dati e opposizione, oltre al diritto di proporre reclamo all'autorità di controllo competente. Le modalità di esercizio di tali diritti saranno indicate nel testo definitivo dell'informativa.
+              <strong className="text-app-accent">Finalità e base giuridica del trattamento</strong> I dati sono trattati per: creare e gestire l'account utente e consentire l'autenticazione (base giuridica: esecuzione del servizio richiesto dall'utente, art. 6.1.b GDPR); fornire le funzionalità di gioco, classifica e analisi delle partite; garantire la sicurezza della piattaforma e prevenire abusi (base giuridica: legittimo interesse del titolare, art. 6.1.f GDPR); rispondere a osservazioni o richieste di supporto volontariamente inviate dall'utente.
+            </p>
+            <p>
+              <strong className="text-app-accent">Fornitori terzi coinvolti nel trattamento</strong> Per il funzionamento del servizio, i dati possono essere trattati da fornitori terzi che agiscono come responsabili del trattamento: hosting ed erogazione del servizio (Render), database (Neon), invio di comunicazioni email transazionali (Brevo).
+            </p>
+            <p>
+              <strong className="text-app-accent">Conservazione dei dati</strong> I dati dell'account vengono conservati per il tempo in cui l'utente utilizza attivamente il servizio. L'account e i dati ad esso associati vengono cancellati automaticamente trascorsi 6 mesi dall'ultimo accesso (login) effettuato dall'utente. L'utente può inoltre richiedere in qualsiasi momento la cancellazione anticipata del proprio account scrivendo a postmasterchess@proton.me
+            </p>
+            <p>
+              <strong className="text-app-accent">Diritti dell'interessato</strong> Ai sensi degli articoli 15-22 del Regolamento (UE) 2016/679 (GDPR), l'utente ha diritto di accesso, rettifica, cancellazione, limitazione del trattamento, portabilità dei dati e opposizione, oltre al diritto di proporre reclamo al Garante per la Protezione dei Dati Personali. Per esercitare questi diritti è possibile scrivere a: postmasterchess@proton.me
+            </p>
+            <p className="text-[11px] text-app-text-muted/80 pt-2">
+              Ultimo aggiornamento: 12 luglio 2026
             </p>
           </div>
 
