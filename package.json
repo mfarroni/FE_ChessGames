@@ -1,10 +1,10 @@
 {
-  "_comment_version": "1.4.0",
-  "_comment_datetime": "12/07/2026 (Ora di Roma)",
-  "_comment_description": "Trasformazione in PWA installabile: manifest, icone (generate via sharp), e service worker con vite-plugin-pwa (autoUpdate; precache dei soli asset statici, Stockfish escluso e gestito CacheFirst al primo uso).",
+  "_comment_version": "1.4.1",
+  "_comment_datetime": "15/07/2026 (Ora di Roma)",
+  "_comment_description": "Aggiornamenti PWA più affidabili: registrazione esplicita del service worker (virtual:pwa-register) con reload su controllerchange e update check su visibilitychange, e cleanupOutdatedCaches in workbox (fix app iOS standalone 'congelata' su versione JS precedente).",
   "name": "chess-frontend",
   "private": true,
-  "version": "1.4.0",
+  "version": "1.4.1",
   "type": "module",
   "scripts": {
     "dev": "vite",

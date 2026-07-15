@@ -1,7 +1,10 @@
 /**
- * Versione: 1.0.0
- * Data e Ora Modifica: 02/07/2026 10:26:03 (Ora di Roma)
- * Problema Risolto: Revisione e inserimento dell'orario di modifica attuale di Roma e versione 1.0.0 in tutti i file.
+ * Versione: 1.1.0
+ * Data e Ora Modifica: 15/07/2026 (Ora di Roma)
+ * Problema Risolto: Aggiunta la reference ai tipi di vite-plugin-pwa/client per
+ * poter importare il modulo virtuale "virtual:pwa-register" (registrazione
+ * esplicita del service worker in src/main.tsx).
  */
 
 /// <reference types="vite/client" />
+/// <reference types="vite-plugin-pwa/client" />
