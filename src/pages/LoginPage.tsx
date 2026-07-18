@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useSession } from '../session/useSession';
 import {
   Gamepad2,
@@ -126,6 +126,23 @@ export default function LoginPage() {
           >
             Accedi al Tavolo <ChevronRight className="w-4 h-4" />
           </button>
+
+          {/* Link discreti di recupero credenziali */}
+          <div className="flex items-center justify-center gap-3 pt-1 select-none">
+            <Link
+              to="/password-dimenticata"
+              className="text-[10px] font-mono text-app-text-muted hover:text-app-text transition cursor-pointer"
+            >
+              Password dimenticata?
+            </Link>
+            <span className="text-app-border select-none" aria-hidden="true">•</span>
+            <Link
+              to="/username-dimenticato"
+              className="text-[10px] font-mono text-app-text-muted hover:text-app-text transition cursor-pointer"
+            >
+              Username dimenticato?
+            </Link>
+          </div>
         </form>
 
         <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-app-border text-center select-none">

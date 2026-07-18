@@ -14,6 +14,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import RecoverUsernamePage from './pages/RecoverUsernamePage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import LobbyPage from './pages/LobbyPage';
 import GamePage from './pages/GamePage';
@@ -195,6 +198,9 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/password-dimenticata" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/username-dimenticato" element={<RecoverUsernamePage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route
               path="/lobby"

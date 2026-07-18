@@ -3,7 +3,9 @@
   "short_name": "GranMaster",
   "description": "Scacchi online in tempo reale: sfida altri giocatori o l'IA, scala la classifica Elo e analizza le tue partite.",
   "start_url": "/",
+  "id": "/",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#120D09",
   "theme_color": "#92400E",
   "icons": [
@@ -24,6 +26,22 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Lobby e partita su desktop"
+    },
+    {
+      "src": "/screenshots/mobile-1.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Partita in corso su mobile"
     }
   ]
 }
