@@ -208,7 +208,15 @@ export default function AdminPanel() {
         body: formData
       });
       if (!res.ok) {
-        setPhotoUploadError('Errore durante il caricamento, riprova');
+        // Non scartiamo il corpo: proviamo a leggere il vero motivo dal server.
+        let message = `Errore durante il caricamento (HTTP ${res.status}), riprova`;
+        try {
+          const errData = await res.json();
+          if (errData && errData.message) message = errData.message;
+        } catch {
+          /* nessun corpo JSON leggibile: resta il messaggio con lo status HTTP */
+        }
+        setPhotoUploadError(message);
         return;
       }
       const data = await res.json();

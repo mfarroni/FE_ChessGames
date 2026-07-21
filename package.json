@@ -1,10 +1,10 @@
 {
-  "_comment_version": "1.8.0",
+  "_comment_version": "1.8.1",
   "_comment_datetime": "21/07/2026 (Ora di Roma)",
-  "_comment_description": "Pannello admin: nuova sezione 'Foto Hero Landing' per caricare le foto dello slideshow (POST /api/admin/photos/upload via FormData, campo 'photos'), con stato di caricamento, conteggio caricate ed elenco leggibile dei file scartati con motivo, e gestione errori di rete.",
+  "_comment_description": "Fix upload foto: quando la risposta non è ok, l'admin mostra il vero messaggio d'errore del server (res.json().message) invece del testo generico, con fallback che include lo status HTTP.",
   "name": "chess-frontend",
   "private": true,
-  "version": "1.8.0",
+  "version": "1.8.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
