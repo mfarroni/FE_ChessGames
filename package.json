@@ -1,10 +1,10 @@
 {
-  "_comment_version": "1.5.0",
-  "_comment_datetime": "15/07/2026 (Ora di Roma)",
-  "_comment_description": "Integrazione FE recupero credenziali: link 'Password dimenticata?'/'Username dimenticato?' nel login e tre nuove pagine pubbliche (/password-dimenticata, /reset-password, /username-dimenticato) collegate agli endpoint forgot-password, reset-password e recover-username, con messaggi generici anti-enumerazione.",
+  "_comment_version": "1.6.0",
+  "_comment_datetime": "21/07/2026 (Ora di Roma)",
+  "_comment_description": "Animazione hero decorativa nella landing (ChessHeroAnimation): scacchiera con 5 pezzi sparsi casualmente ad ogni apertura, foto admin (GET /api/photos/random) su quei pezzi, e mano SVG che sposta la Donna d1->d4 in loop via CSS (rispetta prefers-reduced-motion). Schiarito leggermente il tema scuro di default (app-bg/app-panel).",
   "name": "chess-frontend",
   "private": true,
-  "version": "1.5.0",
+  "version": "1.6.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
