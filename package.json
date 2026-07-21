@@ -1,10 +1,10 @@
 {
-  "_comment_version": "1.6.0",
+  "_comment_version": "1.7.0",
   "_comment_datetime": "21/07/2026 (Ora di Roma)",
-  "_comment_description": "Animazione hero decorativa nella landing (ChessHeroAnimation): scacchiera con 5 pezzi sparsi casualmente ad ogni apertura, foto admin (GET /api/photos/random) su quei pezzi, e mano SVG che sposta la Donna d1->d4 in loop via CSS (rispetta prefers-reduced-motion). Schiarito leggermente il tema scuro di default (app-bg/app-panel).",
+  "_comment_description": "Sostituita l'animazione hero scacchistica con uno slideshow foto (HeroPhotoSlideshow): fino a 5 foto admin da GET /api/photos/random, loop 5s con dissolvenza 700ms, indicatori a pallino, fail-soft se assenti (return null) e rispetto di prefers-reduced-motion. Rimosso ChessHeroAnimation.tsx.",
   "name": "chess-frontend",
   "private": true,
-  "version": "1.6.0",
+  "version": "1.7.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
