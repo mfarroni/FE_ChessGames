@@ -17,7 +17,7 @@ import {
   Gamepad2
 } from 'lucide-react';
 import SupportButton from '../components/SupportButton';
-import ChessHeroAnimation from '../components/ChessHeroAnimation';
+import HeroPhotoSlideshow from '../components/HeroPhotoSlideshow';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ export default function HomePage() {
     <div className="w-full flex flex-col items-center justify-center animate-fade-in duration-500">
       <div className="w-full max-w-5xl space-y-12">
 
-        <ChessHeroAnimation />
+        <HeroPhotoSlideshow />
 
         {/* Brand Hero & App Store Pitch */}
         <div className="text-center space-y-4 max-w-3xl mx-auto">
