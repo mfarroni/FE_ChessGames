@@ -1,10 +1,10 @@
 {
-  "_comment_version": "1.7.0",
+  "_comment_version": "1.8.0",
   "_comment_datetime": "21/07/2026 (Ora di Roma)",
-  "_comment_description": "Sostituita l'animazione hero scacchistica con uno slideshow foto (HeroPhotoSlideshow): fino a 5 foto admin da GET /api/photos/random, loop 5s con dissolvenza 700ms, indicatori a pallino, fail-soft se assenti (return null) e rispetto di prefers-reduced-motion. Rimosso ChessHeroAnimation.tsx.",
+  "_comment_description": "Pannello admin: nuova sezione 'Foto Hero Landing' per caricare le foto dello slideshow (POST /api/admin/photos/upload via FormData, campo 'photos'), con stato di caricamento, conteggio caricate ed elenco leggibile dei file scartati con motivo, e gestione errori di rete.",
   "name": "chess-frontend",
   "private": true,
-  "version": "1.7.0",
+  "version": "1.8.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

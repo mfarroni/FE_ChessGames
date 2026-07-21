@@ -4,7 +4,7 @@
  * Problema Risolto: Aggiunta la sezione "Osservazioni Giocatori" nel pannello admin (lista feedback da GET /api/admin/feedback con modale di dettaglio).
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Lock, 
   Database, 
@@ -24,6 +24,7 @@ import {
   Mail,
   Key,
   MessageSquare,
+  ImagePlus,
   X
 } from 'lucide-react';
 import { API_BASE_URL } from '../utils/apiConfig';
@@ -84,6 +85,16 @@ export default function AdminPanel() {
   const [feedback, setFeedback] = useState<FeedbackItem[]>([]);
   const [loadingFeedback, setLoadingFeedback] = useState<boolean>(false);
   const [selectedFeedback, setSelectedFeedback] = useState<FeedbackItem | null>(null);
+
+  // Hero photos upload states
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const [uploadingPhotos, setUploadingPhotos] = useState<boolean>(false);
+  const [photoUploadResult, setPhotoUploadResult] = useState<{
+    uploaded: { originalName: string; url: string }[];
+    skipped: { originalName: string; reason: string }[];
+  } | null>(null);
+  const [photoUploadError, setPhotoUploadError] = useState<string | null>(null);
   
   // User Modal states
   const [showUserModal, setShowUserModal] = useState<boolean>(false);
@@ -177,6 +188,42 @@ export default function AdminPanel() {
       console.error('Errore nel caricamento dei feedback:', err);
     } finally {
       setLoadingFeedback(false);
+    }
+  };
+
+  const handleUploadPhotos = async () => {
+    if (!adminToken || photoFiles.length === 0) return;
+    setUploadingPhotos(true);
+    setPhotoUploadError(null);
+    setPhotoUploadResult(null);
+    try {
+      const formData = new FormData();
+      // Il campo "photos" viene ripetuto per ogni file.
+      photoFiles.forEach((file) => formData.append('photos', file));
+      // NB: non impostiamo Content-Type manualmente: il browser aggiunge il
+      // boundary corretto per il multipart/form-data.
+      const res = await fetch('/api/admin/photos/upload', {
+        method: 'POST',
+        headers: { 'x-admin-token': adminToken || '' },
+        body: formData
+      });
+      if (!res.ok) {
+        setPhotoUploadError('Errore durante il caricamento, riprova');
+        return;
+      }
+      const data = await res.json();
+      if (data && data.success) {
+        setPhotoUploadResult({ uploaded: data.uploaded || [], skipped: data.skipped || [] });
+        // Svuota la selezione per permettere un nuovo upload pulito.
+        setPhotoFiles([]);
+        if (photoInputRef.current) photoInputRef.current.value = '';
+      } else {
+        setPhotoUploadError('Errore durante il caricamento, riprova');
+      }
+    } catch (err) {
+      setPhotoUploadError('Errore durante il caricamento, riprova');
+    } finally {
+      setUploadingPhotos(false);
     }
   };
 
@@ -1279,6 +1326,85 @@ export default function AdminPanel() {
                     </p>
                   </button>
                 ))}
+              </div>
+            )}
+          </div>
+
+          {/* HERO PHOTOS UPLOAD PANEL */}
+          <div className="glass-panel border border-app-border p-6 rounded-3xl shadow-xl space-y-4">
+            <div className="flex items-center gap-2.5 border-b border-app-border pb-4">
+              <div className="w-9 h-9 rounded-xl bg-app-accent/20 border border-app-accent/15 flex items-center justify-center text-app-accent">
+                <ImagePlus className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-serif text-base font-bold text-app-text">Foto Hero Landing</h3>
+                <p className="text-[10px] text-app-text-muted">Carica le foto mostrate nello slideshow della landing page (JPG, PNG o WEBP).</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+              <input
+                ref={photoInputRef}
+                type="file"
+                multiple
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => {
+                  setPhotoFiles(e.target.files ? Array.from(e.target.files) : []);
+                  setPhotoUploadResult(null);
+                  setPhotoUploadError(null);
+                }}
+                className="flex-1 text-xs text-app-text-muted file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border file:border-app-border file:bg-app-panel file:text-app-text file:text-xs file:font-bold file:cursor-pointer hover:file:bg-app-panel/70 bg-app-bg border border-app-border rounded-xl p-2 cursor-pointer"
+              />
+              <button
+                onClick={handleUploadPhotos}
+                disabled={uploadingPhotos || photoFiles.length === 0}
+                className="px-5 py-2.5 bg-app-accent hover:bg-app-accent-hover text-app-on-accent text-xs font-bold uppercase tracking-wider rounded-xl border border-app-accent shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+              >
+                {uploadingPhotos ? (
+                  <><RefreshCw className="w-4 h-4 animate-spin" /> Caricamento...</>
+                ) : (
+                  <><ImagePlus className="w-4 h-4" /> Carica foto</>
+                )}
+              </button>
+            </div>
+
+            {photoFiles.length > 0 && !uploadingPhotos && (
+              <p className="text-[10px] font-mono text-app-text-muted">
+                {photoFiles.length} file selezionat{photoFiles.length === 1 ? 'o' : 'i'} (max 10 per volta).
+              </p>
+            )}
+
+            {photoUploadError && (
+              <div className="bg-app-danger-bg border border-app-danger-text/30 rounded-xl p-3 text-app-danger-text text-xs font-medium flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{photoUploadError}</span>
+              </div>
+            )}
+
+            {photoUploadResult && (
+              <div className="space-y-2">
+                <div className="bg-app-success-bg border border-app-success-text/30 rounded-xl p-3 text-app-success-text text-xs font-medium flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>
+                    {photoUploadResult.uploaded.length} fot{photoUploadResult.uploaded.length === 1 ? 'o caricata' : 'o caricate'} con successo.
+                  </span>
+                </div>
+
+                {photoUploadResult.skipped.length > 0 && (
+                  <div className="bg-app-bg border border-app-border rounded-xl p-3 space-y-1.5">
+                    <p className="text-[10px] font-mono uppercase tracking-wider text-app-text-muted font-bold">
+                      {photoUploadResult.skipped.length} file scartat{photoUploadResult.skipped.length === 1 ? 'o' : 'i'}:
+                    </p>
+                    {photoUploadResult.skipped.map((s, i) => (
+                      <div key={i} className="flex items-start gap-2 text-xs text-app-danger-text">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                        <span className="leading-relaxed">
+                          <span className="font-bold">{s.originalName}</span>: {s.reason}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
