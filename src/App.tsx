@@ -26,6 +26,11 @@ import ThemeProvider from './theme/ThemeProvider';
 import ThemeSwitcher from './components/ThemeSwitcher';
 import { Volume2, VolumeX, ShieldCheck } from 'lucide-react';
 
+// Pulsante acustica di sottofondo temporaneamente disattivato: la
+// funzione non è ancora affidabile. Rimetti a true per riattivarlo
+// quando sarà pronta una versione funzionante.
+const SHOW_AMBIENT_TOGGLE = false;
+
 // Shared chrome (header/footer) for every route that lives inside the player
 // session (Home, Login, Register, Lobby, Game). It is intentionally kept out
 // of /admin so the admin panel never triggers the player WebSocket connection.
@@ -64,18 +69,20 @@ function AppLayout() {
         <div className="flex items-center gap-4">
           <ThemeSwitcher />
 
-          <button
-            id="ambient-acoustics-toggle"
-            className={`p-2.5 rounded-xl border flex items-center justify-center outline-none transition-all duration-150 cursor-pointer ${
-              ambienceEnabled
-                ? 'bg-app-accent/20 border-app-accent text-app-accent shadow-[0_0_8px_rgba(146,64,14,0.25)]'
-                : 'bg-app-panel border-app-border text-app-text-muted hover:text-app-text'
-            }`}
-            onClick={handleToggleAmbience}
-            title={ambienceEnabled ? "Disattiva Acustica di Sottofondo" : "Abilita Acustica di Sottofondo"}
-          >
-            {ambienceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-          </button>
+          {SHOW_AMBIENT_TOGGLE && (
+            <button
+              id="ambient-acoustics-toggle"
+              className={`p-2.5 rounded-xl border flex items-center justify-center outline-none transition-all duration-150 cursor-pointer ${
+                ambienceEnabled
+                  ? 'bg-app-accent/20 border-app-accent text-app-accent shadow-[0_0_8px_rgba(146,64,14,0.25)]'
+                  : 'bg-app-panel border-app-border text-app-text-muted hover:text-app-text'
+              }`}
+              onClick={handleToggleAmbience}
+              title={ambienceEnabled ? "Disattiva Acustica di Sottofondo" : "Abilita Acustica di Sottofondo"}
+            >
+              {ambienceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            </button>
+          )}
 
           {hasConfirmedName && player && (
             <div className="flex items-center gap-3 bg-app-panel px-4 py-1.5 rounded-full border border-app-border">
