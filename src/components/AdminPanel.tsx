@@ -25,6 +25,7 @@ import {
   Key,
   MessageSquare,
   ImagePlus,
+  BarChart3,
   X
 } from 'lucide-react';
 import { API_BASE_URL } from '../utils/apiConfig';
@@ -85,6 +86,19 @@ export default function AdminPanel() {
   const [feedback, setFeedback] = useState<FeedbackItem[]>([]);
   const [loadingFeedback, setLoadingFeedback] = useState<boolean>(false);
   const [selectedFeedback, setSelectedFeedback] = useState<FeedbackItem | null>(null);
+
+  // Campaign funnel stats states
+  const [funnelStats, setFunnelStats] = useState<{
+    since: string;
+    totalUsers: number;
+    newUsers: number;
+    newUsersPlayed: number;
+    newUsersReturned: number;
+  } | null>(null);
+  const [loadingFunnelStats, setLoadingFunnelStats] = useState<boolean>(false);
+  const [funnelError, setFunnelError] = useState<string | null>(null);
+  // Periodo selezionato in giorni; 0 = "da sempre" (since = new Date(0)).
+  const [funnelSinceDays, setFunnelSinceDays] = useState<number>(7);
 
   // Hero photos upload states
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -155,6 +169,14 @@ export default function AdminPanel() {
     }
   }, [isAdminLoggedIn, adminToken]);
 
+  // Statistiche funnel: (ri)caricate al login e ad ogni cambio di periodo.
+  useEffect(() => {
+    if (isAdminLoggedIn && adminToken) {
+      fetchFunnelStats(funnelSinceDays);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAdminLoggedIn, adminToken, funnelSinceDays]);
+
   const fetchUsers = async () => {
     if (!adminToken) return;
     setLoadingUsers(true);
@@ -170,6 +192,37 @@ export default function AdminPanel() {
       console.error('Errore nel caricamento degli utenti:', err);
     } finally {
       setLoadingUsers(false);
+    }
+  };
+
+  const fetchFunnelStats = async (days: number) => {
+    if (!adminToken) return;
+    setLoadingFunnelStats(true);
+    setFunnelError(null);
+    try {
+      // days > 0 -> ultimi N giorni; 0 -> "da sempre" (epoch 0).
+      const sinceDate = days > 0 ? new Date(Date.now() - days * 24 * 60 * 60 * 1000) : new Date(0);
+      const res = await fetch(`/api/admin/stats/funnel?since=${encodeURIComponent(sinceDate.toISOString())}`, {
+        headers: { 'x-admin-token': adminToken }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success) {
+        setFunnelStats({
+          since: data.since,
+          totalUsers: data.totalUsers,
+          newUsers: data.newUsers,
+          newUsersPlayed: data.newUsersPlayed,
+          newUsersReturned: data.newUsersReturned
+        });
+      } else {
+        setFunnelStats(null);
+        setFunnelError(data.message || 'Errore nel caricamento delle statistiche.');
+      }
+    } catch (err) {
+      setFunnelStats(null);
+      setFunnelError('Errore di connessione al server.');
+    } finally {
+      setLoadingFunnelStats(false);
     }
   };
 
@@ -1287,6 +1340,81 @@ export default function AdminPanel() {
                 });
               })()}
             </div>
+          </div>
+
+          {/* CAMPAIGN FUNNEL STATS PANEL */}
+          <div className="glass-panel border border-app-border p-6 rounded-3xl shadow-xl space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-app-border pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-app-accent/20 border border-app-accent/15 flex items-center justify-center text-app-accent">
+                  <BarChart3 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-serif text-base font-bold text-app-text">Statistiche Campagna</h3>
+                  <p className="text-[10px] text-app-text-muted">Funnel di acquisizione: nuovi iscritti, attivazione e ritorno.</p>
+                </div>
+              </div>
+              {/* Selettore periodo */}
+              <div className="flex items-center gap-1.5 bg-app-bg border border-app-border rounded-xl p-1 select-none">
+                {[{ d: 7, label: '7 giorni' }, { d: 30, label: '30 giorni' }, { d: 0, label: 'Da sempre' }].map((opt) => (
+                  <button
+                    key={opt.d}
+                    onClick={() => setFunnelSinceDays(opt.d)}
+                    className={`px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${
+                      funnelSinceDays === opt.d
+                        ? 'bg-app-accent text-app-on-accent'
+                        : 'text-app-text-muted hover:text-app-text'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {loadingFunnelStats ? (
+              <div className="text-center py-8 text-app-text-muted text-xs">Caricamento statistiche...</div>
+            ) : funnelError ? (
+              <div className="bg-app-danger-bg border border-app-danger-text/30 rounded-xl p-3 text-app-danger-text text-xs text-center font-medium flex items-center justify-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{funnelError}</span>
+              </div>
+            ) : funnelStats ? (
+              <>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                  {[
+                    { label: 'Utenti totali', value: funnelStats.totalUsers },
+                    { label: 'Nuovi utenti nel periodo', value: funnelStats.newUsers },
+                    { label: 'Hanno giocato ≥ 1 partita', value: funnelStats.newUsersPlayed },
+                    { label: 'Tornati una seconda volta', value: funnelStats.newUsersReturned },
+                  ].map((m) => (
+                    <div key={m.label} className="bg-app-bg border border-app-border rounded-2xl p-4 text-center">
+                      <div className="font-serif text-3xl font-black text-app-accent">{m.value}</div>
+                      <div className="text-[10px] text-app-text-muted mt-1 leading-tight">{m.label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {funnelStats.newUsers > 0 && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-app-panel/60 border border-app-border rounded-2xl p-4 text-center">
+                      <div className="font-serif text-2xl font-black text-app-text">
+                        {Math.round((funnelStats.newUsersPlayed / funnelStats.newUsers) * 100)}%
+                      </div>
+                      <div className="text-[10px] text-app-text-muted mt-1">Tasso di attivazione (hanno giocato)</div>
+                    </div>
+                    <div className="bg-app-panel/60 border border-app-border rounded-2xl p-4 text-center">
+                      <div className="font-serif text-2xl font-black text-app-text">
+                        {Math.round((funnelStats.newUsersReturned / funnelStats.newUsers) * 100)}%
+                      </div>
+                      <div className="text-[10px] text-app-text-muted mt-1">Tasso di ritorno (seconda visita)</div>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-8 text-app-text-muted text-xs">Nessun dato disponibile.</div>
+            )}
           </div>
 
           {/* PLAYER FEEDBACK / OSSERVAZIONI GIOCATORI PANEL */}
