@@ -1,10 +1,10 @@
 {
-  "_comment_version": "1.9.0",
+  "_comment_version": "1.9.1",
   "_comment_datetime": "22/07/2026 (Ora di Roma)",
-  "_comment_description": "Analytics cookieless GoatCounter (tag script in index.html, nessun banner cookie) e nuova sezione admin 'Statistiche Campagna' che mostra il funnel da GET /api/admin/stats/funnel (4 metriche + tassi di attivazione/ritorno) con selettore periodo 7g/30g/da sempre.",
+  "_comment_description": "Nascosto dalla UI il pulsante 'acustica di sottofondo' nell'header (flag SHOW_AMBIENT_TOGGLE=false in App.tsx) perché la funzione non è ancora affidabile; la logica sottostante resta intatta e riattivabile.",
   "name": "chess-frontend",
   "private": true,
-  "version": "1.9.0",
+  "version": "1.9.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
