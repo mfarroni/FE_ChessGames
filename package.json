@@ -1,10 +1,10 @@
 {
-  "_comment_version": "1.8.1",
-  "_comment_datetime": "21/07/2026 (Ora di Roma)",
-  "_comment_description": "Fix upload foto: quando la risposta non è ok, l'admin mostra il vero messaggio d'errore del server (res.json().message) invece del testo generico, con fallback che include lo status HTTP.",
+  "_comment_version": "1.9.0",
+  "_comment_datetime": "22/07/2026 (Ora di Roma)",
+  "_comment_description": "Analytics cookieless GoatCounter (tag script in index.html, nessun banner cookie) e nuova sezione admin 'Statistiche Campagna' che mostra il funnel da GET /api/admin/stats/funnel (4 metriche + tassi di attivazione/ritorno) con selettore periodo 7g/30g/da sempre.",
   "name": "chess-frontend",
   "private": true,
-  "version": "1.8.1",
+  "version": "1.9.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
