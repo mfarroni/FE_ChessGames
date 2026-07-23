@@ -4,7 +4,7 @@
  * Problema Risolto: Introduzione sistema di 3 temi colore accessibili (Scuro Elegante, Chiaro Pergamena, Alto Contrasto) selezionabili da ogni pagina, scacchiera esclusa.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSession } from '../session/useSession';
 import {
@@ -44,6 +44,11 @@ export default function RegisterPage() {
     handleVerifyEmailCode,
     handleResendCode
   } = useSession();
+
+  // Consensi marketing OPZIONALI e distinti dal privacy (obbligatorio):
+  // non condizionano mai la registrazione.
+  const [marketingConsent, setMarketingConsent] = useState<boolean>(false);
+  const [thirdPartyMarketingConsent, setThirdPartyMarketingConsent] = useState<boolean>(false);
 
   // Load a fresh CAPTCHA when the registration page is opened.
   useEffect(() => {
@@ -164,7 +169,7 @@ export default function RegisterPage() {
           </button>
         </div>
 
-        <form onSubmit={handleAuthRegister} className="space-y-4">
+        <form onSubmit={(e) => handleAuthRegister(e, marketingConsent, thirdPartyMarketingConsent)} className="space-y-4">
           <div>
             <label className="block text-[10px] font-mono uppercase tracking-wider text-app-text-muted mb-1.5 font-bold">
               Scegli Username
@@ -277,6 +282,36 @@ export default function RegisterPage() {
                 target="_blank"
                 className="text-app-accent hover:opacity-80 underline"
               >informativa sul trattamento dei dati personali</Link>
+            </label>
+          </div>
+
+          <div className="flex items-start gap-2.5 px-1">
+            <input
+              type="checkbox"
+              id="marketing-consent-checkbox"
+              checked={marketingConsent}
+              onChange={(e) => setMarketingConsent(e.target.checked)}
+              className="mt-0.5 w-4 h-4 accent-app-accent bg-app-bg border border-app-border rounded outline-none cursor-pointer flex-shrink-0"
+            />
+            <label htmlFor="marketing-consent-checkbox" className="text-[11px] text-app-text-muted leading-relaxed font-mono">
+              Acconsento a ricevere comunicazioni commerciali, newsletter e offerte
+              promozionali da parte del Titolare del trattamento.
+            </label>
+          </div>
+
+          <div className="flex items-start gap-2.5 px-1">
+            <input
+              type="checkbox"
+              id="third-party-marketing-consent-checkbox"
+              checked={thirdPartyMarketingConsent}
+              onChange={(e) => setThirdPartyMarketingConsent(e.target.checked)}
+              className="mt-0.5 w-4 h-4 accent-app-accent bg-app-bg border border-app-border rounded outline-none cursor-pointer flex-shrink-0"
+            />
+            <label htmlFor="third-party-marketing-consent-checkbox" className="text-[11px] text-app-text-muted leading-relaxed font-mono">
+              Acconsento alla comunicazione dei miei dati personali ai partner
+              commerciali del Titolare affinché possano trattarli, in qualità di
+              autonomi titolari, per l'invio di proprie comunicazioni commerciali e
+              promozionali, come descritto nell'<Link to="/privacy" target="_blank" className="text-app-accent hover:opacity-80 underline">Informativa Privacy</Link>.
             </label>
           </div>
 
