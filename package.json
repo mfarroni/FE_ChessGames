@@ -1,10 +1,10 @@
 {
-  "_comment_version": "1.10.0",
+  "_comment_version": "1.10.1",
   "_comment_datetime": "22/07/2026 (Ora di Roma)",
-  "_comment_description": "Registrazione: due checkbox consenso marketing opzionali e distinti (marketing proprio + terzi) inviati al backend senza mai bloccare la registrazione; privacy policy con le due sezioni di trattamento separate (bozza da revisione legale); badge store landing aggiornato a \"Prossimamente\".",
+  "_comment_description": "Etichette registrazione: tag [Obbligatorio] (accento) sul consenso privacy e [Opzionale] (muted) sui due consensi marketing; badge store landing da \"Prossimamente\" a \"As soon as possible\". Solo testo/markup, nessuna logica.",
   "name": "chess-frontend",
   "private": true,
-  "version": "1.10.0",
+  "version": "1.10.1",
   "type": "module",
   "scripts": {
     "dev": "vite",

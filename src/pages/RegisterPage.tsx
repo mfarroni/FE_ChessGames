@@ -277,7 +277,7 @@ export default function RegisterPage() {
               className="mt-0.5 w-4 h-4 accent-app-accent bg-app-bg border border-app-border rounded outline-none cursor-pointer flex-shrink-0"
             />
             <label htmlFor="privacy-consent-checkbox" className="text-[11px] text-app-text-muted leading-relaxed font-mono">
-              Accetto l'<Link
+              <span className="text-app-accent font-bold">[Obbligatorio]</span> Accetto l'<Link
                 to="/privacy"
                 target="_blank"
                 className="text-app-accent hover:opacity-80 underline"
@@ -294,7 +294,7 @@ export default function RegisterPage() {
               className="mt-0.5 w-4 h-4 accent-app-accent bg-app-bg border border-app-border rounded outline-none cursor-pointer flex-shrink-0"
             />
             <label htmlFor="marketing-consent-checkbox" className="text-[11px] text-app-text-muted leading-relaxed font-mono">
-              Acconsento a ricevere comunicazioni commerciali, newsletter e offerte
+              <span className="text-app-text-muted font-bold">[Opzionale]</span> Acconsento a ricevere comunicazioni commerciali, newsletter e offerte
               promozionali da parte del Titolare del trattamento.
             </label>
           </div>
@@ -308,7 +308,7 @@ export default function RegisterPage() {
               className="mt-0.5 w-4 h-4 accent-app-accent bg-app-bg border border-app-border rounded outline-none cursor-pointer flex-shrink-0"
             />
             <label htmlFor="third-party-marketing-consent-checkbox" className="text-[11px] text-app-text-muted leading-relaxed font-mono">
-              Acconsento alla comunicazione dei miei dati personali ai partner
+              <span className="text-app-text-muted font-bold">[Opzionale]</span> Acconsento alla comunicazione dei miei dati personali ai partner
               commerciali del Titolare affinché possano trattarli, in qualità di
               autonomi titolari, per l'invio di proprie comunicazioni commerciali e
               promozionali, come descritto nell'<Link to="/privacy" target="_blank" className="text-app-accent hover:opacity-80 underline">Informativa Privacy</Link>.

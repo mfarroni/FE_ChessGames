@@ -196,7 +196,7 @@ export default function HomePage() {
           {/* Store Badges */}
           <div className="flex flex-col items-center gap-3">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-app-accent/20 border border-app-accent/40 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest text-app-accent">
-              <Sparkles className="w-3 h-3" /> Prossimamente
+              <Sparkles className="w-3 h-3" /> As soon as possible
             </span>
             <div className="flex flex-wrap items-center justify-center gap-4">
             {/* App Store */}
