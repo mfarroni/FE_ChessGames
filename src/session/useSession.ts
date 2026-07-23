@@ -79,7 +79,7 @@ export interface SessionContextValue {
   setDifficulty: (d: 'facile' | 'medio' | 'difficile') => void;
 
   // Auth handlers
-  handleAuthRegister: (e: React.FormEvent) => void;
+  handleAuthRegister: (e: React.FormEvent, marketingConsent?: boolean, thirdPartyMarketingConsent?: boolean) => void;
   handleAuthLogin: (e: React.FormEvent) => void;
   handleVerifyEmailCode: (e: React.FormEvent) => void;
   handleRegister: (e: React.FormEvent) => void; // guest flow

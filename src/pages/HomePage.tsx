@@ -189,12 +189,16 @@ export default function HomePage() {
               Gioca Ovunque Ti Trovi
             </h3>
             <p className="text-xs text-app-text-muted max-w-sm leading-relaxed">
-              L'applicazione è progettata per adattarsi perfettamente su tutti gli schermi ed è pronta per essere pubblicata gratuitamente sugli store digitali iOS e Android.
+              L'applicazione è progettata per adattarsi perfettamente su tutti gli schermi e sarà presto disponibile gratuitamente sugli store digitali iOS e Android.
             </p>
           </div>
 
           {/* Store Badges */}
-          <div className="flex flex-wrap items-center justify-center gap-4">
+          <div className="flex flex-col items-center gap-3">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-app-accent/20 border border-app-accent/40 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest text-app-accent">
+              <Sparkles className="w-3 h-3" /> Prossimamente
+            </span>
+            <div className="flex flex-wrap items-center justify-center gap-4">
             {/* App Store */}
             <div className="bg-app-bg hover:bg-app-panel border border-app-border rounded-xl px-4 py-2 flex items-center gap-2.5 w-40 cursor-not-allowed shadow-md transition">
               <Smartphone className="w-6 h-6 text-app-text" />
@@ -210,6 +214,7 @@ export default function HomePage() {
                 <span className="text-[9px] font-mono text-app-text-muted block uppercase font-medium">Get it on</span>
                 <span className="text-xs font-sans text-app-text font-bold block mt-0.5">Google Play</span>
               </div>
+            </div>
             </div>
           </div>
         </div>

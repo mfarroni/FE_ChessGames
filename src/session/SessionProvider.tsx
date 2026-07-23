@@ -244,7 +244,7 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
   }, [hasConfirmedName]);
 
   // Handle register request on backend with Captcha and Email verification
-  const handleAuthRegister = async (e: React.FormEvent) => {
+  const handleAuthRegister = async (e: React.FormEvent, marketingConsent: boolean = false, thirdPartyMarketingConsent: boolean = false) => {
     e.preventDefault();
     setRegError('');
     setRegSuccess('');
@@ -270,7 +270,11 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
           captchaId,
           captchaAnswer: captchaAnswer.trim(),
           privacyAccepted: true,
-          privacyPolicyVersion: PRIVACY_POLICY_VERSION
+          privacyPolicyVersion: PRIVACY_POLICY_VERSION,
+          // Consensi marketing opzionali (non condizionano la registrazione).
+          marketingConsent,
+          thirdPartyMarketingConsent,
+          marketingConsentPolicyVersion: PRIVACY_POLICY_VERSION
         })
       });
       const data = await res.json();

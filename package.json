@@ -1,10 +1,10 @@
 {
-  "_comment_version": "1.9.1",
+  "_comment_version": "1.10.0",
   "_comment_datetime": "22/07/2026 (Ora di Roma)",
-  "_comment_description": "Nascosto dalla UI il pulsante 'acustica di sottofondo' nell'header (flag SHOW_AMBIENT_TOGGLE=false in App.tsx) perché la funzione non è ancora affidabile; la logica sottostante resta intatta e riattivabile.",
+  "_comment_description": "Registrazione: due checkbox consenso marketing opzionali e distinti (marketing proprio + terzi) inviati al backend senza mai bloccare la registrazione; privacy policy con le due sezioni di trattamento separate (bozza da revisione legale); badge store landing aggiornato a \"Prossimamente\".",
   "name": "chess-frontend",
   "private": true,
-  "version": "1.9.1",
+  "version": "1.10.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
